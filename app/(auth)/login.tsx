@@ -15,8 +15,15 @@ export default function Login()
     };
 
     return (
-        <View style={{ flex: 1, justifyContent: "center", padding: 20, backgroundColor: "white"}}>
-            <Text>Login to FitCast</Text>
+        <View style={{ 
+            flex: 1, 
+            justifyContent: "center", 
+            padding: 20, backgroundColor: 
+            "#59C1BD"}}>
+
+            <Text style={{ fontFamily: "Epilogue-Bold", fontSize: 20}}>
+                Login to FitCast
+                </Text>
 
             <TextInput
                 placeholder = "Username"
