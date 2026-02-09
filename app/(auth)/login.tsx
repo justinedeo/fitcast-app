@@ -1,46 +1,32 @@
 import { router } from "expo-router";
-import React, { useState } from "react";
-import { Alert, Button, Text, TextInput, View } from "react-native";
-import { auth } from "../../services/firebaseConfig";
-// changed to email
 import { signInWithEmailAndPassword } from "firebase/auth";
+import React, { useState } from "react";
+import { Alert, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { auth } from "../../services/firebaseConfig";
 
 export default function Login() {
-    const [email, setEmail] = useState(""); // Changed 'username' to 'email' to match Firebase Auth
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
     const handleLogin = async () => {
         try {
-            // Authenticate w/ firebase
             await signInWithEmailAndPassword(auth, email, password);
-            
-            console.log("Login successful!");
-            // Route on successful login check
             router.replace("/(tabs)");
         } catch (error: any) {
-            // Error handling
-            console.error("Login error:", error.message);
             Alert.alert("Login Failed", "Please check your email and password.");
         }
     };
 
     return (
-        <View style={{ 
-            flex: 1, 
-            justifyContent: "center", 
-            padding: 20, 
-            backgroundColor: "#59C1BD"
-        }}>
-            <Text style={{ fontFamily: "Epilogue-Bold", fontSize: 20 }}>
-                Login to FitCast
-            </Text>
+        <View style={styles.container}>
+            <Text style={styles.title}>Login to FitCast</Text>
 
             <TextInput
-                placeholder="Email Address" // Email for firebase
+                placeholder="Email Address"
                 value={email}
                 onChangeText={setEmail}
                 autoCapitalize="none"
-                style={{ borderWidth: 1, marginVertical: 10, padding: 8, backgroundColor: 'white' }}
+                style={styles.input}
             />
 
             <TextInput
@@ -48,10 +34,69 @@ export default function Login() {
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry
-                style={{ borderWidth: 1, marginVertical: 10, padding: 8, backgroundColor: 'white' }}
+                style={styles.input}
             />
 
-            <Button title="Sign In" onPress={handleLogin} />
+            {/* Sign In Button */}
+            <Pressable style={styles.button} onPress={handleLogin}>
+                <Text style={styles.buttonText}>Sign In</Text>
+            </Pressable>
+
+            {/* New to FitCast? Sign up*/}
+            <Pressable 
+                onPress={() => router.push("/(auth)/register")}
+                style={{ marginTop: 20 }}
+            >
+                <Text style={styles.footerText}>
+                    New to FitCast? <Text style={{ fontWeight: 'bold' }}>Sign up</Text>
+                </Text>
+            </Pressable>
         </View>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 20,
+        backgroundColor: "#59C1BD",
+    },
+    title: {
+        fontSize: 24,
+        color: "white",
+        marginBottom: 20,
+        fontWeight: "600",
+    },
+    input: {
+        width: "100%",
+        height: 50,
+        backgroundColor: "#F0F5E9",
+        borderRadius: 10,
+        paddingHorizontal: 15,
+        marginVertical: 10,
+
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 3,
+    },
+    button: {
+        backgroundColor: "#134E96",
+        paddingVertical: 12,
+        paddingHorizontal: 60,
+        borderRadius: 25,
+        marginTop: 30,
+    },
+    buttonText: {
+        color: "white",
+        fontSize: 18,
+        fontWeight: "bold",
+    },
+    footerText: {
+        color: "white",
+        fontSize: 14,
+    },
+});
