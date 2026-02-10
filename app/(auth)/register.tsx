@@ -1,4 +1,4 @@
-import { router } from "expo-router"; // Add this import
+import { router } from "expo-router"; // Included for screen nav
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import React, { FC, useState } from 'react';
@@ -6,6 +6,7 @@ import { Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, Te
 import { auth, db } from "../../services/firebaseConfig";
 
 const Register: FC = () => {
+// Form state
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
@@ -25,7 +26,7 @@ const Register: FC = () => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-
+    // Store user profile in firestore
       await setDoc(doc(db, "users", user.uid), {
         fullName: fullName,
         username: username,
@@ -33,7 +34,7 @@ const Register: FC = () => {
         phoneNumber: phone,
         createdAt: serverTimestamp()
       });
-
+      // Route back to login after successful profile creation
       Alert.alert(
         "Success", 
         "Profile created successfully!",
@@ -120,10 +121,12 @@ const Register: FC = () => {
             placeholderTextColor="#8689A0"
             value={phone}
             onChangeText={setPhone}
-            keyboardType="phone-pad"
+            keyboardType="default"  // Numpad to normal keyboard *more integrated done option*
             style={styles.input}
             returnKeyType="done"
-          />
+            blurOnSubmit={true}
+            onSubmitEditing={() => handleSignup()}
+            />
           
           <TouchableOpacity style={styles.button} onPress={handleSignup}>
             <Text style={styles.buttonText}>Register</Text>
