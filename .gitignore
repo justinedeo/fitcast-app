@@ -42,4 +42,4 @@ app-example
 /android
 
 # Firebase Config MAKE SURE NOT TO COMMIT
-services/firebaseConfig.ts
+**/firebaseConfig.ts
