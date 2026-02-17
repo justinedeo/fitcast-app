@@ -1,7 +1,7 @@
 import { router } from "expo-router";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
-import { Alert, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, Pressable, StyleSheet, Text, TextInput, View, Platform } from "react-native";
 import { auth } from "../../services/firebaseConfig";
 
 export default function Login() {
@@ -12,8 +12,12 @@ export default function Login() {
         try {
             await signInWithEmailAndPassword(auth, email, password);
             router.replace("/(tabs)/home");
-        } catch (error: any) {
-            Alert.alert("Login Failed", "Please check your email and password.");
+        } catch (error: any) { // Updating catch block because currently it doesn't work on web
+            if (Platform.OS == 'web') {
+                alert("Login Failed, Please check your email and password.");
+            } else {
+                Alert.alert("Login Failed", "Please check your email and password.");
+            }
         }
     };
 
@@ -45,7 +49,7 @@ export default function Login() {
             </Pressable>
 
             {/* New to FitCast? Sign up*/}
-            <Pressable 
+            <Pressable
                 onPress={() => router.push("/(auth)/register")}
                 style={{ marginTop: 20 }}
             >
