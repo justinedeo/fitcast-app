@@ -41,3 +41,99 @@ Generated sources: index.d.ts [8025B] react\index.d.ts [3961B] react\esm\package
  {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0223 14:50:35.898391    7292 dev.go:104] Listening on address (HTTP + gRPC): 127.0.0.1:50001\n"}}
 [debug] [2026-02-23T20:50:37.794Z] I0223 14:50:37.748424    7292 engine.go:205] [/emulator/fitcast-app 851b] ExecuteGraphqlRead IntrospectionQuery: succeeded. 
  {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0223 14:50:37.748424    7292 engine.go:205] [/emulator/fitcast-app 851b] ExecuteGraphqlRead IntrospectionQuery: succeeded. \n"}}
+[debug] [2026-02-26T22:36:33.593Z] [Firebase Plugin] Activating Firebase extension.
+[info] [Firebase Plugin] Checked firebase-tools, is up to date!
+[debug] [2026-02-26T22:36:38.333Z] [Firebase Plugin] requireAuthWrapper
+[debug] [2026-02-26T22:36:38.335Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-26T22:36:38.335Z] > authorizing via signed-in user (morrow4242@gmail.com)
+[debug] [2026-02-26T22:36:38.336Z] Checked if tokens are valid: false, expires at: 1772144343433
+[debug] [2026-02-26T22:36:38.337Z] Checked if tokens are valid: false, expires at: 1772144343433
+[debug] [2026-02-26T22:36:38.337Z] > refreshing access token with scopes: []
+[debug] [2026-02-26T22:36:38.338Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-02-26T22:36:38.338Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-26T22:36:38.344Z] [Firebase Plugin] VSCode notification server listening on port 40001
+[info] [Firebase Plugin] Starting Data Connect toolkit (version 3.1.4) on port 50001
+[debug] [2026-02-26T22:36:38.623Z] W0226 16:36:38.618666   24044 control.go:74] [/emulator/fitcast-app 0750] connector "example" has errors: example\mutations.gql:23:4: user_upsert (data: User_Data): column email is required but is missing in data
+
+sources: example\mutations.gql [730B] example\queries.gql [617B] 
+I0226 16:36:38.619170   24044 control.go:100] [/emulator/fitcast-app 0750] UpdateResources(): done
+Main schema: sources: schema\schema.gql [980B] 
+Connector "example": sources: example\mutations.gql [730B] example\queries.gql [617B] 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"W0226 16:36:38.618666   24044 control.go:74] [/emulator/fitcast-app 0750] connector \"example\" has errors: example\\mutations.gql:23:4: user_upsert (data: User_Data): column email is required but is missing in data\n\nsources: example\\mutations.gql [730B] example\\queries.gql [617B] \nI0226 16:36:38.619170   24044 control.go:100] [/emulator/fitcast-app 0750] UpdateResources(): done\nMain schema: sources: schema\\schema.gql [980B] \nConnector \"example\": sources: example\\mutations.gql [730B] example\\queries.gql [617B] \n"}}
+[debug] [2026-02-26T22:36:38.624Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2026-02-26T22:36:38.624Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: port"}}
+[debug] [2026-02-26T22:36:38.624Z] Starting Data Connect Emulator with command {"binary":"C:\\Users\\morro\\.cache\\firebase\\emulators\\dataconnect-emulator-3.1.4.exe","args":["--logtostderr","-v=2","dev","--listen=localhost:50001","--config_dir=c:\\Users\\morro\\Desktop\\fitcast\\fitcast-app\\dataconnect","--enable_output_schema_extensions=true","--enable_output_generated_sdk=true"],"optionalArgs":["listen","config_dir","enable_output_schema_extensions","enable_output_generated_sdk"],"joinArgs":true,"shell":false,"port":9399} {"metadata":{"emulator":{"name":"dataconnect"},"message":"Starting Data Connect Emulator with command {\"binary\":\"C:\\\\Users\\\\morro\\\\.cache\\\\firebase\\\\emulators\\\\dataconnect-emulator-3.1.4.exe\",\"args\":[\"--logtostderr\",\"-v=2\",\"dev\",\"--listen=localhost:50001\",\"--config_dir=c:\\\\Users\\\\morro\\\\Desktop\\\\fitcast\\\\fitcast-app\\\\dataconnect\",\"--enable_output_schema_extensions=true\",\"--enable_output_generated_sdk=true\"],\"optionalArgs\":[\"listen\",\"config_dir\",\"enable_output_schema_extensions\",\"enable_output_generated_sdk\"],\"joinArgs\":true,\"shell\":false,\"port\":9399}"}}
+[info] i  dataconnect: Data Connect Emulator logging to dataconnect-debug.log {"metadata":{"emulator":{"name":"dataconnect"},"message":"Data Connect Emulator logging to \u001b[1mdataconnect-debug.log\u001b[22m"}}
+[debug] [2026-02-26T22:36:38.664Z] I0226 16:36:38.652610   55488 load.go:31] Reloading schema and connectors...
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0226 16:36:38.652610   55488 load.go:31] Reloading schema and connectors...\n"}}
+[debug] [2026-02-26T22:36:38.695Z] W0226 16:36:38.695554   55488 control.go:74] [/emulator/fitcast-app 82b0] connector "example" has errors: example\mutations.gql:23:4: user_upsert (data: User_Data): column email is required but is missing in data
+
+sources: example\mutations.gql [730B] example\queries.gql [617B] 
+I0226 16:36:38.695554   55488 control.go:100] [/emulator/fitcast-app 82b0] UpdateResources(): done
+Main schema: sources: schema\schema.gql [980B] 
+Connector "example": sources: example\mutations.gql [730B] example\queries.gql [617B] 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"W0226 16:36:38.695554   55488 control.go:74] [/emulator/fitcast-app 82b0] connector \"example\" has errors: example\\mutations.gql:23:4: user_upsert (data: User_Data): column email is required but is missing in data\n\nsources: example\\mutations.gql [730B] example\\queries.gql [617B] \nI0226 16:36:38.695554   55488 control.go:100] [/emulator/fitcast-app 82b0] UpdateResources(): done\nMain schema: sources: schema\\schema.gql [980B] \nConnector \"example\": sources: example\\mutations.gql [730B] example\\queries.gql [617B] \n"}}
+[debug] [2026-02-26T22:36:38.700Z] E0226 16:36:38.695554   55488 load.go:73] Could not load sources: 
+Errors: example\mutations.gql:23:4: user_upsert (data: User_Data): column email is required but is missing in data
+I0226 16:36:38.699776   55488 collector.go:107] schema extensions wrote into "c:\\Users\\morro\\Desktop\\fitcast\\fitcast-app\\dataconnect\\.dataconnect\\schema"
+Generated sources: prelude.gql [80731B] main\implicit.gql [2790B] main\input.gql [51155B] main\relation.gql [27701B] main\query.gql [7650B] main\mutation.gql [20683B] 
+I0226 16:36:38.699776   55488 load.go:74] Finished reloading
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"E0226 16:36:38.695554   55488 load.go:73] Could not load sources: \nErrors: example\\mutations.gql:23:4: user_upsert (data: User_Data): column email is required but is missing in data\nI0226 16:36:38.699776   55488 collector.go:107] schema extensions wrote into \"c:\\\\Users\\\\morro\\\\Desktop\\\\fitcast\\\\fitcast-app\\\\dataconnect\\\\.dataconnect\\\\schema\"\nGenerated sources: prelude.gql [80731B] main\\implicit.gql [2790B] main\\input.gql [51155B] main\\relation.gql [27701B] main\\query.gql [7650B] main\\mutation.gql [20683B] \nI0226 16:36:38.699776   55488 load.go:74] Finished reloading\n"}}
+[debug] [2026-02-26T22:36:38.714Z] I0226 16:36:38.714689   55488 dev.go:104] Listening on address (HTTP + gRPC): 127.0.0.1:50001
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0226 16:36:38.714689   55488 dev.go:104] Listening on address (HTTP + gRPC): 127.0.0.1:50001\n"}}
+[debug] [2026-02-26T22:36:38.716Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-02-26T22:36:38.716Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-26T22:36:38.730Z] [Firebase Plugin] User found:  morrow4242@gmail.com
+[info] [Firebase Plugin] (Core:Project) New user detected, fetching projects
+[debug] [2026-02-26T22:36:38.731Z] Checked if tokens are valid: true, expires at: 1772148997716
+[debug] [2026-02-26T22:36:38.731Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects pageSize=1000
+[debug] [2026-02-26T22:36:38.875Z] I0226 16:36:38.875453   55488 engine.go:208] [/emulator/fitcast-app 82b0] ExecuteGraphqlRead IntrospectionQuery: succeeded. 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0226 16:36:38.875453   55488 engine.go:208] [/emulator/fitcast-app 82b0] ExecuteGraphqlRead IntrospectionQuery: succeeded. \n"}}
+[debug] [2026-02-26T22:36:38.974Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects 200
+[debug] [2026-02-26T22:36:38.975Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects [omitted]
+[info] [Firebase Plugin] Stopping Data Connect toolkit
+[warn] !  Data Connect Emulator has exited upon receiving signal: SIGINT 
+[debug] [2026-02-26T22:46:48.960Z] [Firebase Plugin] Activating Firebase extension.
+[info] [Firebase Plugin] Checked firebase-tools, is up to date!
+[debug] [2026-02-26T22:46:53.282Z] [Firebase Plugin] requireAuthWrapper
+[debug] [2026-02-26T22:46:53.283Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-26T22:46:53.283Z] > authorizing via signed-in user (morrow4242@gmail.com)
+[debug] [2026-02-26T22:46:53.285Z] Checked if tokens are valid: true, expires at: 1772148997716
+[debug] [2026-02-26T22:46:53.285Z] Checked if tokens are valid: true, expires at: 1772148997716
+[debug] [2026-02-26T22:46:53.285Z] [Firebase Plugin] User found:  morrow4242@gmail.com
+[info] [Firebase Plugin] (Core:Project) New user detected, fetching projects
+[debug] [2026-02-26T22:46:53.286Z] Checked if tokens are valid: true, expires at: 1772148997716
+[debug] [2026-02-26T22:46:53.287Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects pageSize=1000
+[debug] [2026-02-26T22:46:53.293Z] [Firebase Plugin] VSCode notification server listening on port 40001
+[info] [Firebase Plugin] Starting Data Connect toolkit (version 3.1.4) on port 50001
+[debug] [2026-02-26T22:46:53.549Z] W0226 16:46:53.543652   27172 control.go:74] [/emulator/fitcast-app 550c] connector "example" has errors: example\mutations.gql:23:4: user_upsert (data: User_Data): column email is required but is missing in data
+
+sources: example\mutations.gql [730B] example\queries.gql [617B] 
+I0226 16:46:53.545158   27172 control.go:100] [/emulator/fitcast-app 550c] UpdateResources(): done
+Main schema: sources: schema\schema.gql [980B] 
+Connector "example": sources: example\mutations.gql [730B] example\queries.gql [617B] 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"W0226 16:46:53.543652   27172 control.go:74] [/emulator/fitcast-app 550c] connector \"example\" has errors: example\\mutations.gql:23:4: user_upsert (data: User_Data): column email is required but is missing in data\n\nsources: example\\mutations.gql [730B] example\\queries.gql [617B] \nI0226 16:46:53.545158   27172 control.go:100] [/emulator/fitcast-app 550c] UpdateResources(): done\nMain schema: sources: schema\\schema.gql [980B] \nConnector \"example\": sources: example\\mutations.gql [730B] example\\queries.gql [617B] \n"}}
+[debug] [2026-02-26T22:46:53.549Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2026-02-26T22:46:53.549Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: port"}}
+[debug] [2026-02-26T22:46:53.550Z] Starting Data Connect Emulator with command {"binary":"C:\\Users\\morro\\.cache\\firebase\\emulators\\dataconnect-emulator-3.1.4.exe","args":["--logtostderr","-v=2","dev","--listen=localhost:50001","--config_dir=c:\\Users\\morro\\Desktop\\fitcast\\fitcast-app\\dataconnect","--enable_output_schema_extensions=true","--enable_output_generated_sdk=true"],"optionalArgs":["listen","config_dir","enable_output_schema_extensions","enable_output_generated_sdk"],"joinArgs":true,"shell":false,"port":9399} {"metadata":{"emulator":{"name":"dataconnect"},"message":"Starting Data Connect Emulator with command {\"binary\":\"C:\\\\Users\\\\morro\\\\.cache\\\\firebase\\\\emulators\\\\dataconnect-emulator-3.1.4.exe\",\"args\":[\"--logtostderr\",\"-v=2\",\"dev\",\"--listen=localhost:50001\",\"--config_dir=c:\\\\Users\\\\morro\\\\Desktop\\\\fitcast\\\\fitcast-app\\\\dataconnect\",\"--enable_output_schema_extensions=true\",\"--enable_output_generated_sdk=true\"],\"optionalArgs\":[\"listen\",\"config_dir\",\"enable_output_schema_extensions\",\"enable_output_generated_sdk\"],\"joinArgs\":true,\"shell\":false,\"port\":9399}"}}
+[info] i  dataconnect: Data Connect Emulator logging to dataconnect-debug.log {"metadata":{"emulator":{"name":"dataconnect"},"message":"Data Connect Emulator logging to \u001b[1mdataconnect-debug.log\u001b[22m"}}
+[debug] [2026-02-26T22:46:53.601Z] I0226 16:46:53.584643   41416 load.go:31] Reloading schema and connectors...
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0226 16:46:53.584643   41416 load.go:31] Reloading schema and connectors...\n"}}
+[debug] [2026-02-26T22:46:53.634Z] W0226 16:46:53.620129   41416 control.go:74] [/emulator/fitcast-app f255] connector "example" has errors: example\mutations.gql:23:4: user_upsert (data: User_Data): column email is required but is missing in data
+
+sources: example\mutations.gql [730B] example\queries.gql [617B] 
+I0226 16:46:53.620129   41416 control.go:100] [/emulator/fitcast-app f255] UpdateResources(): done
+Main schema: sources: schema\schema.gql [980B] 
+Connector "example": sources: example\queries.gql [617B] example\mutations.gql [730B] 
+E0226 16:46:53.621130   41416 load.go:73] Could not load sources: 
+Errors: example\mutations.gql:23:4: user_upsert (data: User_Data): column email is required but is missing in data
+I0226 16:46:53.623640   41416 collector.go:107] schema extensions wrote into "c:\\Users\\morro\\Desktop\\fitcast\\fitcast-app\\dataconnect\\.dataconnect\\schema"
+Generated sources: main\mutation.gql [20683B] prelude.gql [80731B] main\implicit.gql [2790B] main\input.gql [51155B] main\relation.gql [27701B] main\query.gql [7650B] 
+I0226 16:46:53.624639   41416 load.go:74] Finished reloading
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"W0226 16:46:53.620129   41416 control.go:74] [/emulator/fitcast-app f255] connector \"example\" has errors: example\\mutations.gql:23:4: user_upsert (data: User_Data): column email is required but is missing in data\n\nsources: example\\mutations.gql [730B] example\\queries.gql [617B] \nI0226 16:46:53.620129   41416 control.go:100] [/emulator/fitcast-app f255] UpdateResources(): done\nMain schema: sources: schema\\schema.gql [980B] \nConnector \"example\": sources: example\\queries.gql [617B] example\\mutations.gql [730B] \nE0226 16:46:53.621130   41416 load.go:73] Could not load sources: \nErrors: example\\mutations.gql:23:4: user_upsert (data: User_Data): column email is required but is missing in data\nI0226 16:46:53.623640   41416 collector.go:107] schema extensions wrote into \"c:\\\\Users\\\\morro\\\\Desktop\\\\fitcast\\\\fitcast-app\\\\dataconnect\\\\.dataconnect\\\\schema\"\nGenerated sources: main\\mutation.gql [20683B] prelude.gql [80731B] main\\implicit.gql [2790B] main\\input.gql [51155B] main\\relation.gql [27701B] main\\query.gql [7650B] \nI0226 16:46:53.624639   41416 load.go:74] Finished reloading\n"}}
+[debug] [2026-02-26T22:46:53.653Z] I0226 16:46:53.652956   41416 dev.go:104] Listening on address (HTTP + gRPC): 127.0.0.1:50001
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0226 16:46:53.652956   41416 dev.go:104] Listening on address (HTTP + gRPC): 127.0.0.1:50001\n"}}
+[debug] [2026-02-26T22:46:53.807Z] I0226 16:46:53.807341   41416 engine.go:208] [/emulator/fitcast-app f255] ExecuteGraphqlRead IntrospectionQuery: succeeded. 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0226 16:46:53.807341   41416 engine.go:208] [/emulator/fitcast-app f255] ExecuteGraphqlRead IntrospectionQuery: succeeded. \n"}}
+[debug] [2026-02-26T22:46:53.812Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects 200
+[debug] [2026-02-26T22:46:53.812Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects [omitted]
