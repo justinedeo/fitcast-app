@@ -4,6 +4,7 @@ import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import React, { FC, useState } from 'react';
 import { Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { auth, db } from "../../services/firebaseConfig";
+import { createUser } from "@fitcast/sdk";
 
 const Register: FC = () => {
   // Form state
@@ -28,13 +29,13 @@ const Register: FC = () => {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       // Store user profile in firestore
-      await setDoc(doc(db, "users", user.uid), {
-        fullName: fullName,
+      await createUser({
+        id: user.uid,
         username: username,
         email: email,
-        phoneNumber: phone,
-        createdAt: serverTimestamp()
+        displayName: fullName
       });
+
       // Sign the user out before redirecting to the home page
       await auth.signOut();
       // Route back to login after successful profile creation

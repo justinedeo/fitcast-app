@@ -1,53 +1,39 @@
-# dependencies
+# --- Node & Expo ---
 node_modules/
-
-# Expo
 .expo/
 dist/
 web-build/
-expo-env.d.ts
+npm-debug.*
+yarn-error.log
 
-# Native
-.kotlin/
-*.orig.*
-*.jks
-*.p8
+# --- Firebase Data Connect (Crucial) ---
+# Ignore the hidden working directory for Data Connect
+dataconnect/.dataconnect/
+
+src/dataconnect-generated/
+
+# Ignore your generated SDK (Update path to match your connector.yaml)
+src/generated/dataconnect/
+
+# --- Firebase General ---
+.firebase/
+# Only ignore if you use multiple projects and don't want to sync aliases
+# .firebaserc 
+
+# --- Secrets & Environment ---
+.env
+.env.local
 *.p12
 *.key
-*.mobileprovision
+*.keystore
+# Ignore native Firebase config if you are using Expo Prebuild/Native modules
+ios/GoogleService-Info.plist
+android/app/google-services.json
 
-# Metro
-.metro-health-check*
-
-# debug
-npm-debug.*
-yarn-debug.*
-yarn-error.*
-
-# macOS
+# --- OS & IDE ---
 .DS_Store
-*.pem
+.vscode/
+.idea/
+*.swp
 
-# local env files
-.env
-.env*.local
-
-# typescript
-*.tsbuildinfo
-
-app-example
-
-# generated native folders
-/ios
-/android
-
-# Firebase Config MAKE SURE NOT TO COMMIT
-**/firebaseConfig.ts
-
-# Data Connect Generated Files
-**/dataconnect
-dataconnect-debug.log
-firebase-debug.log
-pglite-debug.log
-**prelude.gql
-**/schema/
+firebaseConfig.ts

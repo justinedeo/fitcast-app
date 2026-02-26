@@ -1,26 +1,54 @@
-extend type Movie {
+extend type Comment {
   """
   ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
   """
-  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "Movie", purpose: IMPLICIT_KEY_FIELD)
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "Comment", purpose: IMPLICIT_KEY_FIELD)
+  """
+  ✨ Implicit foreign key field based on `Comment`.`post`. It must match the value of `Post`.`id`. See `@ref` for how to customize it.
+  """
+  postId: UUID! @fdc_generated(from: "Comment.post", purpose: IMPLICIT_REF_FIELD)
+  """
+  ✨ Implicit foreign key field based on `Comment`.`user`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
+  """
+  userId: String! @fdc_generated(from: "Comment.user", purpose: IMPLICIT_REF_FIELD)
 }
-extend type MovieMetadata {
+extend type Like {
+  """
+  ✨ Implicit foreign key field based on `Like`.`user`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
+  """
+  userId: String! @fdc_generated(from: "Like.user", purpose: IMPLICIT_REF_FIELD)
+  """
+  ✨ Implicit foreign key field based on `Like`.`post`. It must match the value of `Post`.`id`. See `@ref` for how to customize it.
+  """
+  postId: UUID! @fdc_generated(from: "Like.post", purpose: IMPLICIT_REF_FIELD)
+}
+extend type OutfitRecommendation {
   """
   ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
   """
-  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "MovieMetadata", purpose: IMPLICIT_KEY_FIELD)
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "OutfitRecommendation", purpose: IMPLICIT_KEY_FIELD)
   """
-  ✨ Implicit foreign key field based on `MovieMetadata`.`movie`. It must match the value of `Movie`.`id`. See `@ref` for how to customize it.
+  ✨ Implicit foreign key field based on `OutfitRecommendation`.`user`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
   """
-  movieId: UUID! @fdc_generated(from: "MovieMetadata.movie", purpose: IMPLICIT_REF_FIELD)
+  userId: String! @fdc_generated(from: "OutfitRecommendation.user", purpose: IMPLICIT_REF_FIELD)
 }
-extend type Review {
+extend type Post {
   """
-  ✨ Implicit foreign key field based on `Review`.`movie`. It must match the value of `Movie`.`id`. See `@ref` for how to customize it.
+  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
   """
-  movieId: UUID! @fdc_generated(from: "Review.movie", purpose: IMPLICIT_REF_FIELD)
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "Post", purpose: IMPLICIT_KEY_FIELD)
   """
-  ✨ Implicit foreign key field based on `Review`.`user`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
+  ✨ Implicit foreign key field based on `Post`.`user`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
   """
-  userId: String! @fdc_generated(from: "Review.user", purpose: IMPLICIT_REF_FIELD)
+  userId: String! @fdc_generated(from: "Post.user", purpose: IMPLICIT_REF_FIELD)
+}
+extend type SavedOutfit {
+  """
+  ✨ Implicit foreign key field based on `SavedOutfit`.`user`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
+  """
+  userId: String! @fdc_generated(from: "SavedOutfit.user", purpose: IMPLICIT_REF_FIELD)
+  """
+  ✨ Implicit foreign key field based on `SavedOutfit`.`outfitRecommendation`. It must match the value of `OutfitRecommendation`.`id`. See `@ref` for how to customize it.
+  """
+  outfitRecommendationId: UUID! @fdc_generated(from: "SavedOutfit.outfitRecommendation", purpose: IMPLICIT_REF_FIELD)
 }

@@ -1,8 +1,8 @@
 extend type Query {
   """
-  ✨ Look up a single `Movie` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  ✨ Look up a single `Comment` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
   """
-  movie(
+  comment(
     """
     The unique ID of the object.
     """
@@ -11,17 +11,31 @@ extend type Query {
     """
     The key used to identify the object.
     """
-    key: Movie_Key
+    key: Comment_Key
 
     """
     Fetch the first row based on the filters and ordering.
     """
-    first: Movie_FirstRow
-  ): Movie @fdc_generated(from: "Movie", purpose: QUERY_SINGLE)
+    first: Comment_FirstRow
+  ): Comment @fdc_generated(from: "Comment", purpose: QUERY_SINGLE)
   """
-  ✨ Look up a single `MovieMetadata` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  ✨ Look up a single `Like` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
   """
-  movieMetadata(
+  like(
+    """
+    The key used to identify the object.
+    """
+    key: Like_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Like_FirstRow
+  ): Like @fdc_generated(from: "Like", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `OutfitRecommendation` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  outfitRecommendation(
     """
     The unique ID of the object.
     """
@@ -30,27 +44,46 @@ extend type Query {
     """
     The key used to identify the object.
     """
-    key: MovieMetadata_Key
+    key: OutfitRecommendation_Key
 
     """
     Fetch the first row based on the filters and ordering.
     """
-    first: MovieMetadata_FirstRow
-  ): MovieMetadata @fdc_generated(from: "MovieMetadata", purpose: QUERY_SINGLE)
+    first: OutfitRecommendation_FirstRow
+  ): OutfitRecommendation @fdc_generated(from: "OutfitRecommendation", purpose: QUERY_SINGLE)
   """
-  ✨ Look up a single `Review` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  ✨ Look up a single `Post` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
   """
-  review(
+  post(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
     """
     The key used to identify the object.
     """
-    key: Review_Key
+    key: Post_Key
 
     """
     Fetch the first row based on the filters and ordering.
     """
-    first: Review_FirstRow
-  ): Review @fdc_generated(from: "Review", purpose: QUERY_SINGLE)
+    first: Post_FirstRow
+  ): Post @fdc_generated(from: "Post", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `SavedOutfit` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  savedOutfit(
+    """
+    The key used to identify the object.
+    """
+    key: SavedOutfit_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: SavedOutfit_FirstRow
+  ): SavedOutfit @fdc_generated(from: "SavedOutfit", purpose: QUERY_SINGLE)
   """
   ✨ Look up a single `User` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
   """
@@ -76,18 +109,18 @@ extend type Query {
     first: User_FirstRow
   ): User @fdc_generated(from: "User", purpose: QUERY_SINGLE)
   """
-  ✨ List `Movie` objects in the table and return selected fields, optionally filtered by `where` conditions
+  ✨ List `Comment` objects in the table and return selected fields, optionally filtered by `where` conditions
   """
-  movies(
+  comments(
     """
     Filter condition to narrow down the query results.
     """
-    where: Movie_Filter
+    where: Comment_Filter
 
     """
     Order the query results by specific fields.
     """
-    orderBy: [Movie_Order!]
+    orderBy: [Comment_Order!]
 
     """
     Number of rows to skip before starting to return the results.
@@ -107,21 +140,21 @@ extend type Query {
     """
     Filter condition to apply to the groups of aggregate queries.
     """
-    having: Movie_Having
-  ): [Movie!]! @fdc_generated(from: "Movie", purpose: QUERY_MULTIPLE)
+    having: Comment_Having
+  ): [Comment!]! @fdc_generated(from: "Comment", purpose: QUERY_MULTIPLE)
   """
-  ✨ List `MovieMetadata` objects in the table and return selected fields, optionally filtered by `where` conditions
+  ✨ List `Like` objects in the table and return selected fields, optionally filtered by `where` conditions
   """
-  movieMetadatas(
+  likes(
     """
     Filter condition to narrow down the query results.
     """
-    where: MovieMetadata_Filter
+    where: Like_Filter
 
     """
     Order the query results by specific fields.
     """
-    orderBy: [MovieMetadata_Order!]
+    orderBy: [Like_Order!]
 
     """
     Number of rows to skip before starting to return the results.
@@ -141,21 +174,21 @@ extend type Query {
     """
     Filter condition to apply to the groups of aggregate queries.
     """
-    having: MovieMetadata_Having
-  ): [MovieMetadata!]! @fdc_generated(from: "MovieMetadata", purpose: QUERY_MULTIPLE)
+    having: Like_Having
+  ): [Like!]! @fdc_generated(from: "Like", purpose: QUERY_MULTIPLE)
   """
-  ✨ List `Review` objects in the table and return selected fields, optionally filtered by `where` conditions
+  ✨ List `OutfitRecommendation` objects in the table and return selected fields, optionally filtered by `where` conditions
   """
-  reviews(
+  outfitRecommendations(
     """
     Filter condition to narrow down the query results.
     """
-    where: Review_Filter
+    where: OutfitRecommendation_Filter
 
     """
     Order the query results by specific fields.
     """
-    orderBy: [Review_Order!]
+    orderBy: [OutfitRecommendation_Order!]
 
     """
     Number of rows to skip before starting to return the results.
@@ -175,8 +208,76 @@ extend type Query {
     """
     Filter condition to apply to the groups of aggregate queries.
     """
-    having: Review_Having
-  ): [Review!]! @fdc_generated(from: "Review", purpose: QUERY_MULTIPLE)
+    having: OutfitRecommendation_Having
+  ): [OutfitRecommendation!]! @fdc_generated(from: "OutfitRecommendation", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `Post` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  posts(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Post_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Post_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Post_Having
+  ): [Post!]! @fdc_generated(from: "Post", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `SavedOutfit` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  savedOutfits(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: SavedOutfit_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [SavedOutfit_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: SavedOutfit_Having
+  ): [SavedOutfit!]! @fdc_generated(from: "SavedOutfit", purpose: QUERY_MULTIPLE)
   """
   ✨ List `User` objects in the table and return selected fields, optionally filtered by `where` conditions
   """
