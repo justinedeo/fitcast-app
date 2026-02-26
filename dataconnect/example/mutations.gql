@@ -9,3 +9,22 @@ mutation CreateUser($id: String!, $username: String!, $email: String!, $displayN
     displayName: $displayName
   })
 }
+
+# dataconnect/example/mutations.gql
+
+# Mutation to update profile details
+mutation UpdateUserProfile(
+  $id: String!, 
+  $displayName: String, 
+  $bio: String, 
+  $location: String, 
+  $profilePictureUrl: String
+) @auth(level: USER) {
+  user_upsert(data: {
+    id: $id,
+    displayName: $displayName,
+    bio: $bio,
+    location: $location,
+    profilePictureUrl: $profilePictureUrl
+  })
+}

@@ -1,79 +1,22 @@
-I0226 13:34:41.752116   56664 load.go:31] Reloading schema and connectors...
-I0226 13:34:41.760670   56664 control.go:100] [projects/emulator/locations/emulator/services/fitcast-app 3cc5] UpdateResources(): done
-Main schema: sources: schema\schema.gql [2044B] 
-Connector "example": sources: example\mutations.gql [1276B] example\queries.gql [1879B] 
-I0226 13:34:41.767501   56664 codegen.go:80] [connector "example" javascriptSdk] Generating sources into "C:\\Users\\morro\\Desktop\\fitcast\\fitcast-app\\src\\dataconnect-generated"
-I0226 13:34:41.774626   56664 collector.go:107] schema extensions wrote into "C:\\Users\\morro\\Desktop\\fitcast\\fitcast-app\\dataconnect\\.dataconnect\\schema"
-Generated sources: prelude.gql [80730B] main\input.gql [28173B] main\relation.gql [14318B] main\query.gql [5099B] main\mutation.gql [13679B] main\implicit.gql [1261B] 
-I0226 13:34:41.778139   56664 collector.go:107] connector "example" javascriptSdk wrote into "C:\\Users\\morro\\Desktop\\fitcast\\fitcast-app\\src\\dataconnect-generated"
-Generated sources: esm\index.esm.js [3561B] react\index.cjs.js [3439B] react\esm\index.esm.js [3269B] index.d.ts [8025B] esm\package.json [17B] react\index.d.ts [3961B] react\esm\package.json [17B] .guides/usage.md [3489B] .guides/setup.md [1682B] index.cjs.js [4051B] package.json [863B] README.md [40931B] react\package.json [460B] react\README.md [48299B] .guides/config.json [236B] 
-I0226 13:34:41.780139   56664 installsdk.go:55] Package @dataconnect/generated is already installed. Skipping installation
-I0226 13:34:41.780139   56664 load.go:109] Finished reloading
-I0226 13:34:41.781158   56664 dev.go:104] Listening on address (HTTP + gRPC): 127.0.0.1:9399
-I0226 13:34:41.781158   56664 dev.go:104] Listening on address (HTTP + gRPC): [::1]:9399
-I0226 13:34:44.074965   56664 control.go:100] [projects/emulator/locations/emulator/services/fitcast-app ecaf] UpdateResources(): done
-Main schema: sources: schema\schema.gql [2044B] 
-Connector "example": sources: example\mutations.gql [1276B] example\queries.gql [1879B] 
-I0226 14:27:51.780797   56664 load.go:31] Reloading schema and connectors...
-I0226 14:27:51.815715   56664 migrate.go:24] Running migration SQL:
-Step 1: ALTER TABLE "public"."user" ALTER COLUMN "id" TYPE uuid, ALTER COLUMN "id" SET DEFAULT uuid_generate_v4(), ALTER COLUMN "username" TYPE text, ADD COLUMN "bio" text NULL, ADD COLUMN "created_at" timestamptz NOT NULL, ADD COLUMN "display_name" text NULL, ADD COLUMN "email" text NOT NULL, ADD COLUMN "location" text NULL, ADD COLUMN "password_hash" text NOT NULL, ADD COLUMN "profile_picture_url" text NULL
-Step 2: CREATE TABLE "public"."post" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "user_id" uuid NOT NULL, "content" text NOT NULL, "created_at" timestamptz NOT NULL, "image_url" text NULL, "location_tag" text NULL, PRIMARY KEY ("id"), CONSTRAINT "post_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."user" ("id") ON DELETE CASCADE)
-Step 3: CREATE INDEX "post_userId_idx" ON "public"."post" ("user_id")
-Step 4: CREATE TABLE "public"."comment" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "post_id" uuid NOT NULL, "user_id" uuid NOT NULL, "content" text NOT NULL, "created_at" timestamptz NOT NULL, PRIMARY KEY ("id"), CONSTRAINT "comment_post_id_fkey" FOREIGN KEY ("post_id") REFERENCES "public"."post" ("id") ON DELETE CASCADE, CONSTRAINT "comment_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."user" ("id") ON DELETE CASCADE)
-Step 5: CREATE INDEX "comment_postId_idx" ON "public"."comment" ("post_id")
-Step 6: CREATE INDEX "comment_userId_idx" ON "public"."comment" ("user_id")
-Step 7: CREATE TABLE "public"."like" ("user_id" uuid NOT NULL, "post_id" uuid NOT NULL, "created_at" timestamptz NOT NULL, PRIMARY KEY ("user_id", "post_id"), CONSTRAINT "like_post_id_fkey" FOREIGN KEY ("post_id") REFERENCES "public"."post" ("id") ON DELETE CASCADE, CONSTRAINT "like_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."user" ("id") ON DELETE CASCADE)
-Step 8: CREATE INDEX "like_postId_idx" ON "public"."like" ("post_id")
-Step 9: CREATE INDEX "like_userId_idx" ON "public"."like" ("user_id")
-Step 10: CREATE TABLE "public"."outfit_recommendation" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "user_id" uuid NOT NULL, "clothing_items" text[] NULL, "created_at" timestamptz NOT NULL, "description" text NULL, "image_url" text NOT NULL, "temperature_range" text NOT NULL, "weather_condition" text NOT NULL, PRIMARY KEY ("id"), CONSTRAINT "outfit_recommendation_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."user" ("id") ON DELETE CASCADE)
-Step 11: CREATE INDEX "outfit_recommendation_userId_idx" ON "public"."outfit_recommendation" ("user_id")
-Step 12: CREATE TABLE "public"."saved_outfit" ("user_id" uuid NOT NULL, "outfit_recommendation_id" uuid NOT NULL, "created_at" timestamptz NOT NULL, "notes" text NULL, PRIMARY KEY ("user_id", "outfit_recommendation_id"), CONSTRAINT "saved_outfit_outfit_recommendation_id_fkey" FOREIGN KEY ("outfit_recommendation_id") REFERENCES "public"."outfit_recommendation" ("id") ON DELETE CASCADE, CONSTRAINT "saved_outfit_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."user" ("id") ON DELETE CASCADE)
-Step 13: CREATE INDEX "saved_outfit_outfitRecommendationId_idx" ON "public"."saved_outfit" ("outfit_recommendation_id")
-Step 14: CREATE INDEX "saved_outfit_userId_idx" ON "public"."saved_outfit" ("user_id")
-Step 15: DROP TABLE "public"."Reviews"
-Step 16: DROP TABLE "public"."movie_metadata"
-Step 17: DROP TABLE "public"."movie"
-E0226 14:27:51.819221   56664 service.go:125] [projects/emulator/locations/emulator/services/fitcast-app ecaf] failed to migrate schema: SQL migration error: failed to apply migration: failed to execute SQL migration
-step 1 modify "user" table: pq: column "id" cannot be cast automatically to type uuid
-SQL: ALTER TABLE "public"."user" ALTER COLUMN "id" TYPE uuid, ALTER COLUMN "id" SET DEFAULT uuid_generate_v4(), ALTER COLUMN "username" TYPE text, ADD COLUMN "bio" text NULL, ADD COLUMN "created_at" timestamptz NOT NULL, ADD COLUMN "display_name" text NULL, ADD COLUMN "email" text NOT NULL, ADD COLUMN "location" text NULL, ADD COLUMN "password_hash" text NOT NULL, ADD COLUMN "profile_picture_url" text NULL
-Original plan:
-Step 1: ALTER TABLE "public"."user" ALTER COLUMN "id" TYPE uuid, ALTER COLUMN "id" SET DEFAULT uuid_generate_v4(), ALTER COLUMN "username" TYPE text, ADD COLUMN "bio" text NULL, ADD COLUMN "created_at" timestamptz NOT NULL, ADD COLUMN "display_name" text NULL, ADD COLUMN "email" text NOT NULL, ADD COLUMN "location" text NULL, ADD COLUMN "password_hash" text NOT NULL, ADD COLUMN "profile_picture_url" text NULL
-Step 2: CREATE TABLE "public"."post" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "user_id" uuid NOT NULL, "content" text NOT NULL, "created_at" timestamptz NOT NULL, "image_url" text NULL, "location_tag" text NULL, PRIMARY KEY ("id"), CONSTRAINT "post_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."user" ("id") ON DELETE CASCADE)
-Step 3: CREATE INDEX "post_userId_idx" ON "public"."post" ("user_id")
-Step 4: CREATE TABLE "public"."comment" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "post_id" uuid NOT NULL, "user_id" uuid NOT NULL, "content" text NOT NULL, "created_at" timestamptz NOT NULL, PRIMARY KEY ("id"), CONSTRAINT "comment_post_id_fkey" FOREIGN KEY ("post_id") REFERENCES "public"."post" ("id") ON DELETE CASCADE, CONSTRAINT "comment_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."user" ("id") ON DELETE CASCADE)
-Step 5: CREATE INDEX "comment_postId_idx" ON "public"."comment" ("post_id")
-Step 6: CREATE INDEX "comment_userId_idx" ON "public"."comment" ("user_id")
-Step 7: CREATE TABLE "public"."like" ("user_id" uuid NOT NULL, "post_id" uuid NOT NULL, "created_at" timestamptz NOT NULL, PRIMARY KEY ("user_id", "post_id"), CONSTRAINT "like_post_id_fkey" FOREIGN KEY ("post_id") REFERENCES "public"."post" ("id") ON DELETE CASCADE, CONSTRAINT "like_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."user" ("id") ON DELETE CASCADE)
-Step 8: CREATE INDEX "like_postId_idx" ON "public"."like" ("post_id")
-Step 9: CREATE INDEX "like_userId_idx" ON "public"."like" ("user_id")
-Step 10: CREATE TABLE "public"."outfit_recommendation" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "user_id" uuid NOT NULL, "clothing_items" text[] NULL, "created_at" timestamptz NOT NULL, "description" text NULL, "image_url" text NOT NULL, "temperature_range" text NOT NULL, "weather_condition" text NOT NULL, PRIMARY KEY ("id"), CONSTRAINT "outfit_recommendation_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."user" ("id") ON DELETE CASCADE)
-Step 11: CREATE INDEX "outfit_recommendation_userId_idx" ON "public"."outfit_recommendation" ("user_id")
-Step 12: CREATE TABLE "public"."saved_outfit" ("user_id" uuid NOT NULL, "outfit_recommendation_id" uuid NOT NULL, "created_at" timestamptz NOT NULL, "notes" text NULL, PRIMARY KEY ("user_id", "outfit_recommendation_id"), CONSTRAINT "saved_outfit_outfit_recommendation_id_fkey" FOREIGN KEY ("outfit_recommendation_id") REFERENCES "public"."outfit_recommendation" ("id") ON DELETE CASCADE, CONSTRAINT "saved_outfit_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."user" ("id") ON DELETE CASCADE)
-Step 13: CREATE INDEX "saved_outfit_outfitRecommendationId_idx" ON "public"."saved_outfit" ("outfit_recommendation_id")
-Step 14: CREATE INDEX "saved_outfit_userId_idx" ON "public"."saved_outfit" ("user_id")
-Step 15: DROP TABLE "public"."Reviews"
-Step 16: DROP TABLE "public"."movie_metadata"
-Step 17: DROP TABLE "public"."movie"
-W0226 14:27:51.824946   56664 control.go:74] [projects/emulator/locations/emulator/services/fitcast-app 798a] connector "example" has errors: example\mutations.gql:6:4: Cannot query field "movie_insert" on type "Mutation". Did you mean "like_insert", "post_insert", "comment_insert", or "user_insert"?
-example\mutations.gql:18:4: Cannot query field "review_upsert" on type "Mutation". Did you mean "like_upsert", "user_upsert", "comment_upsert", or "post_upsert"?
-example\mutations.gql:32:4: Cannot query field "review_delete" on type "Mutation". Did you mean "like_delete", "user_delete", "comment_delete", or "post_delete"?
-example\queries.gql:6:4: Cannot query field "movies" on type "Query".
-example\queries.gql:30:6: Cannot query field "reviews_on_user" on type "User". Did you mean "likes_on_user", "comments_on_user", or "posts_on_user"?
-example\queries.gql:44:4: Cannot query field "movie" on type "Query".
-example\queries.gql:68:4: Cannot query field "movies" on type "Query".
+I0226 15:49:44.066134   16488 load.go:31] Reloading schema and connectors...
+W0226 15:49:44.075435   16488 control.go:74] [projects/emulator/locations/emulator/services/fitcast-app 0d15] connector "example" has errors: example\mutations.gql:23:4: user_upsert (data: User_Data): column email is required but is missing in data
 
-sources: example\mutations.gql [1276B] example\queries.gql [1879B] 
-I0226 14:27:51.824946   56664 control.go:100] [projects/emulator/locations/emulator/services/fitcast-app 798a] UpdateResources(): done
-Main schema: sources: schema\schema.gql [869B] 
-Connector "example": sources: example\mutations.gql [1276B] example\queries.gql [1879B] 
-E0226 14:27:51.825457   56664 load.go:73] Could not load sources: 
-Errors: example\mutations.gql:6:4: Cannot query field "movie_insert" on type "Mutation". Did you mean "like_insert", "post_insert", "comment_insert", or "user_insert"?
-example\mutations.gql:18:4: Cannot query field "review_upsert" on type "Mutation". Did you mean "like_upsert", "user_upsert", "comment_upsert", or "post_upsert"?
-example\mutations.gql:32:4: Cannot query field "review_delete" on type "Mutation". Did you mean "like_delete", "user_delete", "comment_delete", or "post_delete"?
-example\queries.gql:6:4: Cannot query field "movies" on type "Query".
-example\queries.gql:30:6: Cannot query field "reviews_on_user" on type "User". Did you mean "likes_on_user", "comments_on_user", or "posts_on_user"?
-example\queries.gql:44:4: Cannot query field "movie" on type "Query".
-example\queries.gql:68:4: Cannot query field "movies" on type "Query".
-I0226 14:27:51.827001   56664 collector.go:107] schema extensions wrote into "C:\\Users\\morro\\Desktop\\fitcast\\fitcast-app\\dataconnect\\.dataconnect\\schema"
-Generated sources: main\input.gql [51767B] main\relation.gql [28083B] main\query.gql [7530B] main\mutation.gql [20443B] main\implicit.gql [3035B] prelude.gql [80730B] 
-I0226 14:27:51.827001   56664 load.go:74] Finished reloading
+sources: example\mutations.gql [730B] example\queries.gql [617B] 
+I0226 15:49:44.075435   16488 control.go:100] [projects/emulator/locations/emulator/services/fitcast-app 0d15] UpdateResources(): done
+Main schema: sources: schema\schema.gql [980B] 
+Connector "example": sources: example\mutations.gql [730B] example\queries.gql [617B] 
+E0226 15:49:44.075954   16488 load.go:73] Could not load sources: 
+Errors: example\mutations.gql:23:4: user_upsert (data: User_Data): column email is required but is missing in data
+I0226 15:49:44.078691   16488 collector.go:107] schema extensions wrote into "C:\\Users\\morro\\Desktop\\fitcast\\fitcast-app\\dataconnect\\.dataconnect\\schema"
+Generated sources: main\implicit.gql [2790B] main\input.gql [51155B] main\relation.gql [27701B] prelude.gql [80730B] main\query.gql [7650B] main\mutation.gql [20683B] 
+I0226 15:49:44.078691   16488 load.go:74] Finished reloading
+I0226 15:49:44.079732   16488 dev.go:104] Listening on address (HTTP + gRPC): 127.0.0.1:9399
+I0226 15:49:44.079732   16488 dev.go:104] Listening on address (HTTP + gRPC): [::1]:9399
+W0226 15:49:46.440753   16488 control.go:74] [projects/emulator/locations/emulator/services/fitcast-app 2dd2] connector "example" has errors: example\mutations.gql:23:4: user_upsert (data: User_Data): column email is required but is missing in data
+
+sources: example\mutations.gql [730B] example\queries.gql [617B] 
+I0226 15:49:46.440753   16488 control.go:100] [projects/emulator/locations/emulator/services/fitcast-app 2dd2] UpdateResources(): done
+Main schema: sources: schema\schema.gql [980B] 
+Connector "example": sources: example\mutations.gql [730B] example\queries.gql [617B] 
+I0226 15:49:46.440753   16488 service.go:185] [projects/emulator/locations/emulator/services/fitcast-app 2dd2] while configuring to server.Settings{ConnectionString:"dbname='fitcast-7533a-database' host='127.0.0.1' port='5432' sslmode='disable' dbname='fitcast-7533a-database'", MaxOpenConnection:0, UseDummy:false, EnableGoogleMLIntegration:false, SchemaSettings:esql.Settings{SchemaValidationMode:"", SchemaName:""}}, failed to reload last live sources: 
+Errors: example\mutations.gql:23:4: user_upsert (data: User_Data): column email is required but is missing in data

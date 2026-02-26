@@ -25,3 +25,13 @@ query listAllUsers @auth(level: PUBLIC) {
     createdAt
   }
 }
+query GetUserProfile($id: String!) @auth(level: USER) {
+  user(id: $id) {
+    username
+    displayName
+    email
+    bio
+    location
+    profilePictureUrl
+  }
+}
