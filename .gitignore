@@ -50,3 +50,4 @@ firebase-debug.log
 pglite-debug.log
 **prelude.gql
 **/schema/
+/dataconnect/./dataconnect/schema/
