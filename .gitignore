@@ -43,3 +43,10 @@ app-example
 
 # Firebase Config MAKE SURE NOT TO COMMIT
 **/firebaseConfig.ts
+# Data Connect Generated Files
+**/dataconnect
+dataconnect-debug.log
+firebase-debug.log
+pglite-debug.log
+**prelude.gql
+**/schema/
