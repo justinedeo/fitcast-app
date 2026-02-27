@@ -42,3 +42,4 @@ firebaseConfig.ts
 
 expo-env.d.ts
 # @end expo-cli
+.firebase/logs/vsce-debug.log
