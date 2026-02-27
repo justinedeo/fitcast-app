@@ -1,0 +1,71 @@
+# Users
+mutation CreateUser($id: String!, $username: String!, $email: String!, $fullName: String!, $passwordHash: String!) {
+  user_insert(data: {
+    id: $id,
+    username: $username,
+    email: $email,
+    fullName: $fullName,
+    passwordHash: $passwordHash
+  })
+}
+
+# Post
+mutation CreatePost($userId: String!, $content: String, $imageUrl: String, $locationTag: String) {
+  post_insert(data: {
+    user: { id: $userId },
+    content: $content,
+    imageUrl: $imageUrl,
+    locationTag: $locationTag
+  })
+}
+
+# Likes
+mutation LikePost($userId: String!, $postId: UUID!) {
+  like_insert(data: {
+    user: { id: $userId },
+    post: { id: $postId }
+  })
+}
+
+# Save an outfit recommendation
+mutation SaveOutfit($userId: String!, $outfitId: UUID!, $notes: String) {
+  savedOutfit_insert(data: {
+    user: { id: $userId },
+    outfitRecommendation: { id: $outfitId },
+    notes: $notes
+  })
+}
+
+# Commenting on posts
+mutation CreateComment($userId: String!, $postId: UUID!, $content: String!) {
+  comment_insert(data: {
+    user: { id: $userId },
+    post: { id: $postId },
+    content: $content
+  })
+}
+
+mutation CreateOutfitRecommendation(
+  $userId: String!, 
+  $weather: String!, 
+  $tempRange: String!, 
+  $imageUrl: String!, 
+  $items: [String!]!
+) {
+  outfitRecommendation_insert(data: {
+    user: { id: $userId },
+    weatherCondition: $weather,
+    temperatureRange: $tempRange,
+    imageUrl: $imageUrl,
+    clothingItems: $items
+  })
+}
+
+# Save outfit (Linking a User to a Recommendation)
+mutation SaveOutfit($userId: String!, $outfitRecommendationId: UUID!, $notes: String) {
+  savedOutfit_insert(data: {
+    user: { id: $userId },
+    outfitRecommendation: { id: $outfitRecommendationId },
+    notes: $notes
+  })
+}
