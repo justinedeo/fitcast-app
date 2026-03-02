@@ -4,69 +4,82 @@ import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import React, { FC, useState } from 'react';
 import { Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { auth, db } from "../../services/firebaseConfig";
+import { createUser } from "@fitcast/sdk";
 
 const Register: FC = () => {
-// Form state
+  // Form state
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
   const [fullName, setFullName] = useState<string>('');
   const [username, setUsername] = useState<string>('');
-  const [phone, setPhone] = useState<string>(''); 
+  const [phone, setPhone] = useState<string>('');
   const [error, setError] = useState<string>('');
 
   const handleSignup = async (): Promise<void> => {
+    console.log("Starting signup...")
     setError('');
-    
+
     if (password !== confirmPassword) {
       Alert.alert("Error", "Passwords don't match!");
       return;
     }
-    
+
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-    // Store user profile in firestore
-      await setDoc(doc(db, "users", user.uid), {
-        fullName: fullName,
+      // Store user profile in firestore
+      await createUser({
+        id: user.uid,
         username: username,
         email: email,
-        phoneNumber: phone,
-        createdAt: serverTimestamp()
+        displayName: fullName
       });
+
+      // Sign the user out before redirecting to the home page
+      await auth.signOut();
       // Route back to login after successful profile creation
-      Alert.alert(
-        "Success", 
-        "Profile created successfully!",
-        [
-          {
-            text: "OK",
-            onPress: () => router.replace("/(auth)/login")
-          }
-        ]
-      );
-    } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message);
-        Alert.alert("Error", err.message);
+      if (Platform.OS == 'web') {
+        alert("Success: Profile created successfully!");
+        router.replace("/(auth)/login");
+      } else {
+        Alert.alert(
+          "Success",
+          "profile created successfully",
+          [{ text: "OK", onPress: () => router.replace("/(auth)/login") }]
+        );
+      }
+
+    } catch (err: any) {
+      // Firebase errors usually have a .code property
+      if (err.code === 'auth/email-already-in-use') {
+        setError("This email is already registered. Please login or use a different email.");
+        Alert.alert("Account Exists", "This email is already in use.");
+      } else if (err.code === 'auth/invalid-email') {
+        setError("The email address is badly formatted.");
+        Alert.alert("Error", "Invalid Email.");
+      } else {
+        const errorMessage = err instanceof Error ? err.message : "An unknown error occurred";
+        setError(errorMessage);
+        Alert.alert("Error", errorMessage);
       }
     }
   };
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <ScrollView 
+      <ScrollView
         contentContainerStyle={styles.scrollContainer}
         keyboardShouldPersistTaps="handled"
       >
         <Text style={styles.title}>Create Account</Text>
-        
+
         <View style={styles.formContainer}>
-          <TextInput 
-            placeholder="Full Name" 
+          <TextInput
+            placeholder="Full Name"
             placeholderTextColor="#8689A0"
             value={fullName}
             onChangeText={setFullName}
@@ -74,9 +87,9 @@ const Register: FC = () => {
             autoCapitalize="words"
             returnKeyType="next"
           />
-          
-          <TextInput 
-            placeholder="Username" 
+
+          <TextInput
+            placeholder="Username"
             placeholderTextColor="#8689A0"
             value={username}
             onChangeText={setUsername}
@@ -84,9 +97,9 @@ const Register: FC = () => {
             autoCapitalize="none"
             returnKeyType="next"
           />
-          
-          <TextInput 
-            placeholder="Password" 
+
+          <TextInput
+            placeholder="Password"
             placeholderTextColor="#8689A0"
             value={password}
             onChangeText={setPassword}
@@ -94,9 +107,9 @@ const Register: FC = () => {
             style={styles.input}
             returnKeyType="next"
           />
-          
-          <TextInput 
-            placeholder="Verify Password" 
+
+          <TextInput
+            placeholder="Verify Password"
             placeholderTextColor="#8689A0"
             value={confirmPassword}
             onChangeText={setConfirmPassword}
@@ -104,9 +117,9 @@ const Register: FC = () => {
             style={styles.input}
             returnKeyType="next"
           />
-          
-          <TextInput 
-            placeholder="Email" 
+
+          <TextInput
+            placeholder="Email"
             placeholderTextColor="#8689A0"
             value={email}
             onChangeText={setEmail}
@@ -115,9 +128,9 @@ const Register: FC = () => {
             style={styles.input}
             returnKeyType="next"
           />
-          
-          <TextInput 
-            placeholder="Phone Number" 
+
+          <TextInput
+            placeholder="Phone Number"
             placeholderTextColor="#8689A0"
             value={phone}
             onChangeText={setPhone}
@@ -126,13 +139,13 @@ const Register: FC = () => {
             returnKeyType="done"
             blurOnSubmit={true}
             onSubmitEditing={() => handleSignup()}
-            />
-          
+          />
+
           <TouchableOpacity style={styles.button} onPress={handleSignup}>
             <Text style={styles.buttonText}>Register</Text>
           </TouchableOpacity>
         </View>
-        
+
         {error ? <Text style={styles.error}>{error}</Text> : null}
       </ScrollView>
     </KeyboardAvoidingView>
