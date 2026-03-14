@@ -1,42 +1,22 @@
-I0226 18:15:56.715726   24376 load.go:31] Reloading schema and connectors...
-W0226 18:15:56.743653   24376 control.go:74] [projects/emulator/locations/emulator/services/fitcast-app c0b3] connector "example" has errors: example\mutations.gql:23:4: user_upsert (data: User_Data): column email is required but is missing in data
+I0306 23:27:37.388123   27436 load.go:31] Reloading schema and connectors...
+W0306 23:27:37.406785   27436 control.go:74] [projects/emulator/locations/emulator/services/fitcast-app b10c] connector "example" has errors: example\mutations.gql:23:4: user_upsert (data: User_Data): column email is required but is missing in data
 
 sources: example\mutations.gql [730B] example\queries.gql [617B] 
-I0226 18:15:56.743653   24376 control.go:100] [projects/emulator/locations/emulator/services/fitcast-app c0b3] UpdateResources(): done
-Main schema: sources: schema\schema.gql [1029B] 
-Connector "example": sources: example\queries.gql [617B] example\mutations.gql [730B] 
-E0226 18:15:56.754071   24376 load.go:73] Could not load sources: 
-Errors: example\mutations.gql:23:4: user_upsert (data: User_Data): column email is required but is missing in data
-I0226 18:15:56.765031   24376 collector.go:107] schema extensions wrote into "C:\\Users\\justi\\fitcast-app\\dataconnect\\.dataconnect\\schema"
-Generated sources: main\query.gql [7650B] main\mutation.gql [20683B] main\implicit.gql [2790B] prelude.gql [80730B] main\input.gql [51155B] main\relation.gql [27701B] 
-I0226 18:15:56.765031   24376 load.go:74] Finished reloading
-I0226 18:15:56.773194   24376 dev.go:104] Listening on address (HTTP + gRPC): 127.0.0.1:9399
-I0226 18:15:56.774393   24376 dev.go:104] Listening on address (HTTP + gRPC): [::1]:9399
-I0226 18:16:02.429696   24376 migrate.go:24] Running migration SQL:
-Step 1: CREATE EXTENSION IF NOT EXISTS "uuid-ossp"
-Step 2: CREATE TABLE "public"."user" ("id" text NOT NULL, "bio" text NULL, "created_at" timestamptz NOT NULL, "display_name" text NULL, "email" text NOT NULL, "location" text NULL, "profile_picture_url" text NULL, "username" text NOT NULL, PRIMARY KEY ("id"))
-Step 3: CREATE TABLE "public"."post" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "user_id" text NOT NULL, "content" text NOT NULL, "created_at" timestamptz NOT NULL, "image_url" text NULL, "location_tag" text NULL, PRIMARY KEY ("id"), CONSTRAINT "post_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."user" ("id") ON DELETE CASCADE)
-Step 4: CREATE INDEX "post_userId_idx" ON "public"."post" ("user_id")
-Step 5: CREATE TABLE "public"."comment" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "post_id" uuid NOT NULL, "user_id" text NOT NULL, "content" text NOT NULL, "created_at" timestamptz NOT NULL, PRIMARY KEY ("id"), CONSTRAINT "comment_post_id_fkey" FOREIGN KEY ("post_id") REFERENCES "public"."post" ("id") ON DELETE CASCADE, CONSTRAINT "comment_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."user" ("id") ON DELETE CASCADE)
-Step 6: CREATE INDEX "comment_postId_idx" ON "public"."comment" ("post_id")
-Step 7: CREATE INDEX "comment_userId_idx" ON "public"."comment" ("user_id")
-Step 8: CREATE TABLE "public"."like" ("user_id" text NOT NULL, "post_id" uuid NOT NULL, "created_at" timestamptz NOT NULL, PRIMARY KEY ("user_id", "post_id"), CONSTRAINT "like_post_id_fkey" FOREIGN KEY ("post_id") REFERENCES "public"."post" ("id") ON DELETE CASCADE, CONSTRAINT "like_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."user" ("id") ON DELETE CASCADE)
-Step 9: CREATE INDEX "like_postId_idx" ON "public"."like" ("post_id")
-Step 10: CREATE INDEX "like_userId_idx" ON "public"."like" ("user_id")
-Step 11: CREATE TABLE "public"."outfit_recommendation" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "user_id" text NOT NULL, "clothing_items" text[] NULL, "created_at" timestamptz NOT NULL, "description" text NULL, "image_url" text NOT NULL, "temperature_range" text NOT NULL, "weather_condition" text NOT NULL, PRIMARY KEY ("id"), CONSTRAINT "outfit_recommendation_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."user" ("id") ON DELETE CASCADE)
-Step 12: CREATE INDEX "outfit_recommendation_userId_idx" ON "public"."outfit_recommendation" ("user_id")
-Step 13: CREATE TABLE "public"."saved_outfit" ("user_id" text NOT NULL, "outfit_recommendation_id" uuid NOT NULL, "created_at" timestamptz NOT NULL, "notes" text NULL, PRIMARY KEY ("user_id", "outfit_recommendation_id"), CONSTRAINT "saved_outfit_outfit_recommendation_id_fkey" FOREIGN KEY ("outfit_recommendation_id") REFERENCES "public"."outfit_recommendation" ("id") ON DELETE CASCADE, CONSTRAINT "saved_outfit_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."user" ("id") ON DELETE CASCADE)
-Step 14: CREATE INDEX "saved_outfit_outfitRecommendationId_idx" ON "public"."saved_outfit" ("outfit_recommendation_id")
-Step 15: CREATE INDEX "saved_outfit_userId_idx" ON "public"."saved_outfit" ("user_id")
-W0226 18:16:02.697633   24376 control.go:74] [projects/emulator/locations/emulator/services/fitcast-app 29b6] connector "example" has errors: example\mutations.gql:23:4: user_upsert (data: User_Data): column email is required but is missing in data
-
-sources: example\mutations.gql [730B] example\queries.gql [617B] 
-I0226 18:16:02.697633   24376 control.go:100] [projects/emulator/locations/emulator/services/fitcast-app 29b6] UpdateResources(): done
+I0306 23:27:37.406785   27436 control.go:100] [projects/emulator/locations/emulator/services/fitcast-app b10c] UpdateResources(): done
 Main schema: sources: schema\schema.gql [1029B] 
 Connector "example": sources: example\mutations.gql [730B] example\queries.gql [617B] 
-I0226 18:16:02.697633   24376 service.go:185] [projects/emulator/locations/emulator/services/fitcast-app 29b6] while configuring to server.Settings{ConnectionString:"dbname='fitcast-7533a-database' host='127.0.0.1' port='5432' sslmode='disable' dbname='fitcast-7533a-database'", MaxOpenConnection:0, UseDummy:false, EnableGoogleMLIntegration:false, SchemaSettings:esql.Settings{SchemaValidationMode:"", SchemaName:""}}, failed to reload last live sources: 
+E0306 23:27:37.408680   27436 load.go:73] Could not load sources: 
 Errors: example\mutations.gql:23:4: user_upsert (data: User_Data): column email is required but is missing in data
-I0226 18:17:59.727287   24376 execute.go:57] Database ping is quick (likely cached), took 2.0358ms
-I0226 18:17:59.740872   24376 engine.go:208] [projects/emulator/locations/emulator/services/fitcast-app 29b6] ExecuteMutation CreateUser: succeeded. Connector: example
-I0226 18:18:40.395902   24376 execute.go:57] Database ping is quick (likely cached), took 1.4376ms
-I0226 18:18:40.401244   24376 engine.go:208] [projects/emulator/locations/emulator/services/fitcast-app 29b6] ExecuteQuery GetUserProfile: succeeded. Connector: example
+I0306 23:27:37.419039   27436 collector.go:107] schema extensions wrote into "C:\\Users\\justi\\fitcast-app\\dataconnect\\.dataconnect\\schema"
+Generated sources: prelude.gql [80731B] main\input.gql [51155B] main\relation.gql [27701B] main\query.gql [7650B] main\mutation.gql [20683B] main\implicit.gql [2790B] 
+I0306 23:27:37.419039   27436 load.go:74] Finished reloading
+I0306 23:27:37.421592   27436 dev.go:104] Listening on address (HTTP + gRPC): 127.0.0.1:9399
+I0306 23:27:37.425141   27436 dev.go:104] Listening on address (HTTP + gRPC): [::1]:9399
+W0306 23:27:41.747568   27436 control.go:74] [projects/emulator/locations/emulator/services/fitcast-app 9627] connector "example" has errors: example\mutations.gql:23:4: user_upsert (data: User_Data): column email is required but is missing in data
+
+sources: example\queries.gql [617B] example\mutations.gql [730B] 
+I0306 23:27:41.748103   27436 control.go:100] [projects/emulator/locations/emulator/services/fitcast-app 9627] UpdateResources(): done
+Main schema: sources: schema\schema.gql [1029B] 
+Connector "example": sources: example\mutations.gql [730B] example\queries.gql [617B] 
+I0306 23:27:41.748103   27436 service.go:185] [projects/emulator/locations/emulator/services/fitcast-app 9627] while configuring to server.Settings{ConnectionString:"dbname='fitcast-7533a-database' host='127.0.0.1' port='5432' sslmode='disable' dbname='fitcast-7533a-database'", MaxOpenConnection:0, UseDummy:false, EnableGoogleMLIntegration:false, SchemaSettings:esql.Settings{SchemaValidationMode:"", SchemaName:""}}, failed to reload last live sources: 
+Errors: example\mutations.gql:23:4: user_upsert (data: User_Data): column email is required but is missing in data
