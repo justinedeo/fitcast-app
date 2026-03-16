@@ -50,6 +50,7 @@ app-example
 # Firebase Config MAKE SURE NOT TO COMMIT
 **/firebaseConfig.ts
 # Data Connect Generated Files
+*.log
 **/dataconnect
 dataconnect-debug.log
 firebase-debug.log
