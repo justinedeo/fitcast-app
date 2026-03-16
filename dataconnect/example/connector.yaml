@@ -1,8 +1,8 @@
-connectorId: "example"
+connectorId: example
 generate:
   javascriptSdk:
-    outputDir: "../../src/generated/dataconnect" # Adjust this to your app's source folder
-    package: "@fitcast/sdk"
-    packageJsonDir: "../../"
-    react: true
-    angular: false
+    - outputDir: ..\..\fitcast-app\src\dataconnect-generated
+      package: "@dataconnect/generated"
+      packageJsonDir: ..\..\fitcast-app
+      react: true
+      angular: false
