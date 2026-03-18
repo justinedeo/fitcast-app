@@ -1,7 +1,7 @@
 # dataconnect/schema/schema.gql
 
 type User @table {
-  id: String! @default(expr: "auth.uid") # Matches Firebase Auth UID
+  id: String! @default(expr: "auth.uid") 
   username: String!
   email: String!
   displayName: String
@@ -14,9 +14,13 @@ type User @table {
 type Post @table {
   user: User!
   content: String!
-  createdAt: Timestamp!
-  imageUrl: String
+  createdAt: Timestamp! @default(expr: "request.time")
+  imageUrl: String!
   locationTag: String
+  top: String
+  bottom: String
+  outerwear: String
+  wornAt: Timestamp
 }
 
 type Comment @table {
