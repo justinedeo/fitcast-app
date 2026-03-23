@@ -1,7 +1,9 @@
-# dataconnect/example/mutations.gql
-
-mutation CreateUser($id: String!, $username: String!, $email: String!, $displayName: String) 
-  @auth(level: USER) { # Allows any logged-in user to call this
+mutation CreateUser(
+  $id: String!,
+  $username: String!,
+  $email: String!,
+  $displayName: String
+) @auth(level: USER) {
   user_insert(data: {
     id: $id,
     username: $username,
@@ -10,18 +12,19 @@ mutation CreateUser($id: String!, $username: String!, $email: String!, $displayN
   })
 }
 
-# dataconnect/example/mutations.gql
-
-# Mutation to update profile details
 mutation UpdateUserProfile(
-  $id: String!, 
-  $displayName: String, 
-  $bio: String, 
-  $location: String, 
+  $id: String!,
+  $username: String!,
+  $email: String!,
+  $displayName: String,
+  $bio: String,
+  $location: String,
   $profilePictureUrl: String
 ) @auth(level: USER) {
   user_upsert(data: {
     id: $id,
+    username: $username,
+    email: $email,
     displayName: $displayName,
     bio: $bio,
     location: $location,

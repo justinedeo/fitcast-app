@@ -1,11 +1,19 @@
-# dataconnect/example/queries.gql
-
 query listPosts @auth(level: PUBLIC) { 
   posts {
     id
     content
+    imageUrl
+    locationTag
+    createdAt
+    top
+    bottom
+    outerwear
+    wornAt
     user {
+      id
       username
+      displayName
+      profilePictureUrl
     }
   }
 }
@@ -16,22 +24,25 @@ query getOutfits($userId: String!) @auth(level: USER) {
     description
   }
 }
-query listAllUsers @auth(level: PUBLIC) {
+
+query listAllUsers @auth(level: USER) {
   users {
     id
     username
-    email
     displayName
-    createdAt
+    profilePictureUrl
+    location
   }
 }
+
 query GetUserProfile($id: String!) @auth(level: USER) {
   user(id: $id) {
+    id
     username
     displayName
-    email
     bio
     location
     profilePictureUrl
+    createdAt
   }
 }

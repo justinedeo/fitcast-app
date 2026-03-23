@@ -1,71 +1,105 @@
-# Users
-mutation CreateUser($id: String!, $username: String!, $email: String!, $fullName: String!, $passwordHash: String!) {
+mutation CreateUser(
+  $id: String!,
+  $username: String!,
+  $email: String!,
+  $displayName: String
+) @auth(level: USER) {
   user_insert(data: {
-    id: $id,
-    username: $username,
-    email: $email,
-    fullName: $fullName,
-    passwordHash: $passwordHash
+    id: $id
+    username: $username
+    email: $email
+    displayName: $displayName
   })
 }
 
-# Post
-mutation CreatePost($userId: String!, $content: String, $imageUrl: String, $locationTag: String) {
+mutation UpdateUserProfile(
+  $id: String!,
+  $username: String!,
+  $email: String!,
+  $displayName: String,
+  $bio: String,
+  $location: String,
+  $profilePictureUrl: String
+) @auth(level: USER) {
+  user_upsert(data: {
+    id: $id
+    username: $username
+    email: $email
+    displayName: $displayName
+    bio: $bio
+    location: $location
+    profilePictureUrl: $profilePictureUrl
+  })
+}
+
+mutation CreatePost(
+  $userId: String!,
+  $content: String!,
+  $imageUrl: String!,
+  $locationTag: String,
+  $top: String,
+  $bottom: String,
+  $outerwear: String,
+  $wornAt: Timestamp
+) @auth(level: USER) {
   post_insert(data: {
-    user: { id: $userId },
-    content: $content,
-    imageUrl: $imageUrl,
+    user: { id: $userId }
+    content: $content
+    imageUrl: $imageUrl
     locationTag: $locationTag
+    top: $top
+    bottom: $bottom
+    outerwear: $outerwear
+    wornAt: $wornAt
   })
 }
 
-# Likes
-mutation LikePost($userId: String!, $postId: UUID!) {
+mutation LikePost(
+  $userId: String!,
+  $postId: UUID!
+) @auth(level: USER) {
   like_insert(data: {
-    user: { id: $userId },
+    user: { id: $userId }
     post: { id: $postId }
   })
 }
 
-# Save an outfit recommendation
-mutation SaveOutfit($userId: String!, $outfitId: UUID!, $notes: String) {
-  savedOutfit_insert(data: {
-    user: { id: $userId },
-    outfitRecommendation: { id: $outfitId },
-    notes: $notes
-  })
-}
-
-# Commenting on posts
-mutation CreateComment($userId: String!, $postId: UUID!, $content: String!) {
+mutation CreateComment(
+  $userId: String!,
+  $postId: UUID!,
+  $content: String!
+) @auth(level: USER) {
   comment_insert(data: {
-    user: { id: $userId },
-    post: { id: $postId },
+    user: { id: $userId }
+    post: { id: $postId }
     content: $content
   })
 }
 
 mutation CreateOutfitRecommendation(
-  $userId: String!, 
-  $weather: String!, 
-  $tempRange: String!, 
-  $imageUrl: String!, 
+  $userId: String!,
+  $weather: String!,
+  $tempRange: String!,
+  $imageUrl: String!,
   $items: [String!]!
-) {
+) @auth(level: USER) {
   outfitRecommendation_insert(data: {
-    user: { id: $userId },
-    weatherCondition: $weather,
-    temperatureRange: $tempRange,
-    imageUrl: $imageUrl,
+    user: { id: $userId }
+    weatherCondition: $weather
+    temperatureRange: $tempRange
+    imageUrl: $imageUrl
     clothingItems: $items
   })
 }
 
-# Save outfit (Linking a User to a Recommendation)
-mutation SaveOutfit($userId: String!, $outfitRecommendationId: UUID!, $notes: String) {
+mutation SaveOutfit(
+  $userId: String!,
+  $outfitRecommendationId: UUID!,
+  $notes: String
+) @auth(level: USER) {
   savedOutfit_insert(data: {
-    user: { id: $userId },
-    outfitRecommendation: { id: $outfitRecommendationId },
+    user: { id: $userId }
+    outfitRecommendation: { id: $outfitRecommendationId }
     notes: $notes
   })
 }
