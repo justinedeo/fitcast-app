@@ -5,9 +5,9 @@ mutation CreateUser(
   $displayName: String
 ) @auth(level: USER) {
   user_insert(data: {
-    id: $id,
-    username: $username,
-    email: $email,
+    id: $id
+    username: $username
+    email: $email
     displayName: $displayName
   })
 }
@@ -22,12 +22,36 @@ mutation UpdateUserProfile(
   $profilePictureUrl: String
 ) @auth(level: USER) {
   user_upsert(data: {
-    id: $id,
-    username: $username,
-    email: $email,
-    displayName: $displayName,
-    bio: $bio,
-    location: $location,
+    id: $id
+    username: $username
+    email: $email
+    displayName: $displayName
+    bio: $bio
+    location: $location
     profilePictureUrl: $profilePictureUrl
+  })
+}
+
+mutation CreatePost(
+  $userId: String!,
+  $content: String!,
+  $imageUrl: String!,
+  $locationTag: String,
+  $zipCode: String,
+  $top: String,
+  $bottom: String,
+  $outerwear: String,
+  $wornAt: Timestamp
+) @auth(level: USER) {
+  post_insert(data: {
+    user: { id: $userId }
+    content: $content
+    imageUrl: $imageUrl
+    locationTag: $locationTag
+    zipCode: $zipCode
+    top: $top
+    bottom: $bottom
+    outerwear: $outerwear
+    wornAt: $wornAt
   })
 }

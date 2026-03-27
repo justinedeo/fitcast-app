@@ -12,14 +12,22 @@ For each operation, there is a wrapper hook that can be used to call the operati
 
 Here are all of the hooks that get generated:
 ```ts
-import { useCreateUser, useListPosts, useGetOutfits } from '@fitcast/generated/react';
+import { useListPosts, useGetOutfits, useListAllUsers, useGetUserProfile, useCreateUser, useUpdateUserProfile, useCreatePost } from '@firebasegen/example-connector/react';
 // The types of these hooks are available in react/index.d.ts
-
-const { data, isPending, isSuccess, isError, error } = useCreateUser(createUserVars);
 
 const { data, isPending, isSuccess, isError, error } = useListPosts();
 
 const { data, isPending, isSuccess, isError, error } = useGetOutfits(getOutfitsVars);
+
+const { data, isPending, isSuccess, isError, error } = useListAllUsers();
+
+const { data, isPending, isSuccess, isError, error } = useGetUserProfile(getUserProfileVars);
+
+const { data, isPending, isSuccess, isError, error } = useCreateUser(createUserVars);
+
+const { data, isPending, isSuccess, isError, error } = useUpdateUserProfile(updateUserProfileVars);
+
+const { data, isPending, isSuccess, isError, error } = useCreatePost(createPostVars);
 
 ```
 
@@ -58,17 +66,29 @@ If a user is not using a supported framework, they can use the generated SDK dir
 Here's an example of how to use it with the first 5 operations:
 
 ```js
-import { createUser, listPosts, getOutfits } from '@fitcast/generated';
+import { listPosts, getOutfits, listAllUsers, getUserProfile, createUser, updateUserProfile, createPost } from '@firebasegen/example-connector';
 
-
-// Operation CreateUser:  For variables, look at type CreateUserVars in ../index.d.ts
-const { data } = await CreateUser(dataConnect, createUserVars);
 
 // Operation listPosts: 
 const { data } = await ListPosts(dataConnect);
 
 // Operation getOutfits:  For variables, look at type GetOutfitsVars in ../index.d.ts
 const { data } = await GetOutfits(dataConnect, getOutfitsVars);
+
+// Operation listAllUsers: 
+const { data } = await ListAllUsers(dataConnect);
+
+// Operation GetUserProfile:  For variables, look at type GetUserProfileVars in ../index.d.ts
+const { data } = await GetUserProfile(dataConnect, getUserProfileVars);
+
+// Operation CreateUser:  For variables, look at type CreateUserVars in ../index.d.ts
+const { data } = await CreateUser(dataConnect, createUserVars);
+
+// Operation UpdateUserProfile:  For variables, look at type UpdateUserProfileVars in ../index.d.ts
+const { data } = await UpdateUserProfile(dataConnect, updateUserProfileVars);
+
+// Operation CreatePost:  For variables, look at type CreatePostVars in ../index.d.ts
+const { data } = await CreatePost(dataConnect, createPostVars);
 
 
 ```

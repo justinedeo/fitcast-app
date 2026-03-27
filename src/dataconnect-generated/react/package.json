@@ -1,5 +1,5 @@
 {
-  "name": "@fitcast/generated-react",
+  "name": "@firebasegen/example-connector-react",
   "version": "1.0.0",
   "author": "Firebase <firebase-support@google.com> (https://firebase.google.com/)",
   "description": "Generated SDK For example",
