@@ -1,14 +1,15 @@
-query listPosts @auth(level: PUBLIC) { 
+query listPosts @auth(level: PUBLIC) {
   posts {
     id
     content
     imageUrl
     locationTag
-    createdAt
+    zipCode
     top
     bottom
     outerwear
     wornAt
+    createdAt
     user {
       id
       username

@@ -13,7 +13,7 @@ initializeApp({
 
 Then, you can run the SDK as needed.
 ```ts
-import { ... } from '@fitcast/generated';
+import { ... } from '@firebasegen/example-connector';
 ```
 
 

@@ -17,6 +17,7 @@ type Post @table {
   createdAt: Timestamp! @default(expr: "request.time")
   imageUrl: String!
   locationTag: String
+  zipCode: String
   top: String
   bottom: String
   outerwear: String

@@ -1,10 +1,14 @@
-import { router } from "expo-router"; // Included for screen nav
+import { router } from "expo-router"; // Screen nav
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import React, { FC, useState } from 'react';
 import { Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+<<<<<<< HEAD
 import { auth, db } from "../../services/firebaseConfig";
 import { createUser } from "@fitcast/generated";
+=======
+import { auth } from "../../services/firebaseConfig";
+import { createUser } from "../../src/dataconnect-generated";
+>>>>>>> origin/main
 
 const Register: FC = () => {
   // Form state
@@ -51,7 +55,6 @@ const Register: FC = () => {
       }
 
     } catch (err: any) {
-      // Firebase errors usually have a .code property
       if (err.code === 'auth/email-already-in-use') {
         setError("This email is already registered. Please login or use a different email.");
         Alert.alert("Account Exists", "This email is already in use.");
@@ -134,7 +137,7 @@ const Register: FC = () => {
             placeholderTextColor="#8689A0"
             value={phone}
             onChangeText={setPhone}
-            keyboardType="default"  // Numpad to normal keyboard *more integrated done option*
+            keyboardType="default"  // Norm keyboard to fix return issue
             style={styles.input}
             returnKeyType="done"
             blurOnSubmit={true}
