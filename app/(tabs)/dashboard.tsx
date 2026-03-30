@@ -1,21 +1,31 @@
 import { Ionicons } from "@expo/vector-icons";
+import {
+  collection,
+  doc,
+  getDocs,
+  query,
+  serverTimestamp,
+  setDoc,
+  where,
+} from "firebase/firestore";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
-    ActivityIndicator,
-    Image,
-    KeyboardAvoidingView,
-    Platform,
-    RefreshControl,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    useColorScheme,
-    View,
+  ActivityIndicator,
+  Alert,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  useColorScheme,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { dc } from "../../services/firebaseConfig";
+import { auth, db, dc } from "../../services/firebaseConfig";
 import { listPosts } from "../../src/dataconnect-generated";
 
 type Comment = {
@@ -107,6 +117,70 @@ export default function Dashboard() {
   const onRefresh = async () => {
     setRefreshing(true);
     await fetchPosts();
+    await loadSentFriendRequests();
+  };
+
+  const [friendRequestsSent, setFriendRequestsSent] = useState<Record<string, boolean>>({});
+
+  const loadSentFriendRequests = useCallback(async () => {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    try {
+      const q = query(
+        collection(db, "friendRequests"),
+        where("fromId", "==", user.uid)
+      );
+      const snap = await getDocs(q);
+      const sent: Record<string, boolean> = {};
+      snap.forEach((doc) => {
+        const data = doc.data();
+        if (data?.toId) {
+          sent[data.toId] = true;
+        }
+      });
+      setFriendRequestsSent(sent);
+    } catch (error) {
+      console.error("Error loading sent friend requests:", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadSentFriendRequests();
+  }, [loadSentFriendRequests]);
+
+  const sendFriendRequest = async (toUserId: string, toUsername?: string) => {
+    const fromUser = auth.currentUser;
+    if (!fromUser) {
+      Alert.alert("Not signed in", "Please sign in to send friend requests.");
+      return;
+    }
+
+    if (fromUser.uid === toUserId) {
+      Alert.alert("Oops", "You cannot send a friend request to yourself.");
+      return;
+    }
+
+    if (friendRequestsSent[toUserId]) {
+      Alert.alert("Already sent", `Friend request already sent to ${toUsername ?? "this user"}.`);
+      return;
+    }
+
+    try {
+      const requestId = `${fromUser.uid}_${toUserId}`;
+      await setDoc(doc(db, "friendRequests", requestId), {
+        fromId: fromUser.uid,
+        toId: toUserId,
+        status: "pending",
+        createdAt: serverTimestamp(),
+      });
+
+      setFriendRequestsSent((prev) => ({ ...prev, [toUserId]: true }));
+      Alert.alert("Request sent", `Friend request sent to ${toUsername ?? "user"}.`);
+    } catch (error) {
+      console.error("Failed to send friend request:", error);
+      Alert.alert("Error", "Could not send friend request.");
+    }
   };
 
   const handleLike = (postId: string) => {
@@ -222,9 +296,22 @@ export default function Dashboard() {
                       style={styles.avatar}
                     />
                     <View style={styles.headerTextContainer}>
-                      <Text style={[styles.username, { color: theme.text }]}>
-                        {post.user.username}
-                      </Text>
+                      <View style={styles.usernameRow}>
+                        <Text style={[styles.username, { color: theme.text }]}> 
+                          {post.user.username}
+                        </Text>
+                        {auth.currentUser?.uid !== post.user.id && (
+                          <TouchableOpacity
+                            style={styles.friendRequestButton}
+                            onPress={() => sendFriendRequest(post.user.id, post.user.username)}
+                            disabled={friendRequestsSent[post.user.id]}
+                          >
+                            <Text style={styles.friendRequestText}>
+                              {friendRequestsSent[post.user.id] ? "Request Sent" : "Add Friend"}
+                            </Text>
+                          </TouchableOpacity>
+                        )}
+                      </View>
                       <View style={styles.locationRow}>
                         <Ionicons
                           name="location-outline"
@@ -421,10 +508,33 @@ const styles = StyleSheet.create({
   headerTextContainer: {
     flex: 1,
   },
+  usernameRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    flexWrap: "wrap",
+    marginBottom: 4,
+  },
   username: {
     fontSize: 18,
     fontWeight: "700",
     marginBottom: 3,
+  },
+  friendRequestButton: {
+    borderWidth: 1,
+    borderColor: "#0D4C92",
+    backgroundColor: "#0D4C92",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 14,
+    minWidth: 100,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  friendRequestText: {
+    color: "#FFFFFF",
+    fontSize: 12,
+    fontWeight: "600",
   },
   locationRow: {
     flexDirection: "row",
