@@ -1,20 +1,20 @@
+import { router } from "expo-router";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import React, { useEffect, useState } from 'react';
 import {
-    View,
-    Text,
-    StyleSheet,
-    Image,
-    TextInput,
-    TouchableOpacity,
     ActivityIndicator,
-    ScrollView,
     Alert,
+    Image,
     KeyboardAvoidingView,
     Platform,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from 'react-native';
-import { auth } from "../../services/firebaseConfig"; // Ensure this path is correct
-import { getUserProfile, updateUserProfile } from "../../src/generated/dataconnect"; // Adjust to your SDK path
-import { router } from "expo-router";
+import { auth, db } from "../../services/firebaseConfig"; // Ensure this path is correct
 
 const ProfilePage = () => {
     const [loading, setLoading] = useState(true);
@@ -34,12 +34,13 @@ const ProfilePage = () => {
         try {
             const user = auth.currentUser;
             if (user) {
-                const { data } = await getUserProfile({ id: user.uid });
-                if (data?.user) {
-                    setProfile(data.user);
-                    setDisplayName(data.user.displayName || "");
-                    setBio(data.user.bio || "");
-                    setLocation(data.user.location || "");
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    setProfile(userData);
+                    setDisplayName(userData.displayName || "");
+                    setBio(userData.bio || "");
+                    setLocation(userData.location || "");
                 }
             }
         } catch (error) {
@@ -57,26 +58,24 @@ const ProfilePage = () => {
 
             setLoading(true);
 
-            // 1. Perform the update
-            await updateUserProfile({
-                id: user.uid,
-                displayName: displayName,
-                bio: bio,
-                location: location,
+            await updateDoc(doc(db, "users", user.uid), {
+                displayName,
+                bio,
+                location,
             });
 
-            // 2. Update local state MANUALLY instead of just fetching
             setProfile((prev: any) => ({
                 ...prev,
                 displayName,
                 bio,
-                location
+                location,
             }));
 
             setIsEditing(false);
             Alert.alert("Success", "Profile updated!");
         } catch (error) {
             console.error("Update failed:", error);
+            Alert.alert("Error", "Could not update profile.");
         } finally {
             setLoading(false);
         }

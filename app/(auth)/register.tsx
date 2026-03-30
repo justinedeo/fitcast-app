@@ -4,7 +4,7 @@ import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import React, { FC, useState } from 'react';
 import { Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { auth, db } from "../../services/firebaseConfig";
-import { createUser } from "@fitcast/sdk";
+import { createUser } from "@fitcast/generated";
 
 const Register: FC = () => {
   // Form state
