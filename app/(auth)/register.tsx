@@ -1,14 +1,9 @@
+import { createUser } from "@fitcast/generated";
 import { router } from "expo-router"; // Screen nav
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import React, { FC, useState } from 'react';
 import { Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-<<<<<<< HEAD
-import { auth, db } from "../../services/firebaseConfig";
-import { createUser } from "@fitcast/generated";
-=======
 import { auth } from "../../services/firebaseConfig";
-import { createUser } from "../../src/dataconnect-generated";
->>>>>>> origin/main
 
 const Register: FC = () => {
   // Form state
