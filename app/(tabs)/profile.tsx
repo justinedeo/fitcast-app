@@ -1,3 +1,14 @@
+import { router } from "expo-router";
+import {
+    collection,
+    deleteDoc,
+    doc,
+    getDoc,
+    getDocs,
+    query,
+    updateDoc,
+    where,
+} from "firebase/firestore";
 import React, { useEffect, useState } from 'react';
 import {
     ActivityIndicator,
@@ -13,8 +24,6 @@ import {
     View,
 } from 'react-native';
 import { auth, db } from "../../services/firebaseConfig";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { router } from "expo-router";
 
 const ProfilePage = () => {
     const [loading, setLoading] = useState(true);
@@ -25,9 +34,113 @@ const ProfilePage = () => {
     const [bio, setBio] = useState("");
     const [location, setLocation] = useState("");
 
+    const [incomingRequests, setIncomingRequests] = useState<Array<{ requestId: string; fromId: string; fromUser?: any }>>([]);
+    const [friends, setFriends] = useState<Array<any>>([]);
+    const [friendLoading, setFriendLoading] = useState(false);
+
     useEffect(() => {
         fetchProfile();
+        loadFriendData();
     }, []);
+
+    const loadFriendData = async () => {
+        const user = auth.currentUser;
+        if (!user) return;
+
+        setFriendLoading(true);
+
+        try {
+            const pendingQuery = query(
+                collection(db, "friendRequests"),
+                where("toId", "==", user.uid),
+                where("status", "==", "pending")
+            );
+
+            const acceptedFromMeQuery = query(
+                collection(db, "friendRequests"),
+                where("fromId", "==", user.uid),
+                where("status", "==", "accepted")
+            );
+
+            const acceptedToMeQuery = query(
+                collection(db, "friendRequests"),
+                where("toId", "==", user.uid),
+                where("status", "==", "accepted")
+            );
+
+            const [pendingSnap, acceptedFromMeSnap, acceptedToMeSnap] = await Promise.all([
+                getDocs(pendingQuery),
+                getDocs(acceptedFromMeQuery),
+                getDocs(acceptedToMeQuery),
+            ]);
+
+            const bringFriendIds = new Set<string>();
+            const pendingItems: Array<{ requestId: string; fromId: string }> = [];
+
+            pendingSnap.forEach((snap) => {
+                const data = snap.data();
+                if (data?.fromId) {
+                    pendingItems.push({ requestId: snap.id, fromId: data.fromId });
+                    bringFriendIds.add(data.fromId);
+                }
+            });
+
+            const friendIds = new Set<string>();
+            acceptedFromMeSnap.forEach((snap) => {
+                const data = snap.data();
+                if (data?.toId) friendIds.add(data.toId);
+            });
+            acceptedToMeSnap.forEach((snap) => {
+                const data = snap.data();
+                if (data?.fromId) friendIds.add(data.fromId);
+            });
+
+            const userIdsToLoad = Array.from(new Set([...bringFriendIds, ...friendIds]));
+            const userById: Record<string, any> = {};
+
+            await Promise.all(
+                userIdsToLoad.map(async (uid) => {
+                    const userDoc = await getDoc(doc(db, "users", uid));
+                    if (userDoc.exists()) {
+                        userById[uid] = userDoc.data();
+                    }
+                })
+            );
+
+            setIncomingRequests(
+                pendingItems.map((item) => ({ ...item, fromUser: userById[item.fromId] }))
+            );
+
+            setFriends(Array.from(friendIds).map((uid) => userById[uid]).filter(Boolean));
+        } catch (err) {
+            console.error("Error loading friend data:", err);
+            Alert.alert("Error", "Could not load friends data.");
+        } finally {
+            setFriendLoading(false);
+        }
+    };
+
+    const acceptFriendRequest = async (requestId: string) => {
+        try {
+            await updateDoc(doc(db, "friendRequests", requestId), { status: "accepted" });
+            await loadFriendData();
+            Alert.alert("Friend added", "Friend request accepted.");
+        } catch (err) {
+            console.error("Error accepting friend request:", err);
+            Alert.alert("Error", "Could not accept friend request.");
+        }
+    };
+
+    const declineFriendRequest = async (requestId: string) => {
+        try {
+            await deleteDoc(doc(db, "friendRequests", requestId));
+            await loadFriendData();
+            Alert.alert("Declined", "Friend request declined.");
+        } catch (err) {
+            console.error("Error declining friend request:", err);
+            Alert.alert("Error", "Could not decline friend request.");
+        }
+    };
 
     const fetchProfile = async () => {
         try {
@@ -85,6 +198,7 @@ const ProfilePage = () => {
             await auth.signOut();
             router.replace("/(auth)/login");
         } catch (err) {
+            console.error("Sign out error:", err);
             Alert.alert("Error", "Failed to sign out.");
         }
     };
@@ -161,6 +275,48 @@ const ProfilePage = () => {
                         <TouchableOpacity style={styles.cancelButton} onPress={() => setIsEditing(false)}>
                             <Text style={styles.cancelText}>Cancel</Text>
                         </TouchableOpacity>
+                    )}
+                </View>
+
+                <View style={styles.card}>
+                    <Text style={styles.sectionTitle}>Friend Requests</Text>
+                    {friendLoading ? (
+                        <ActivityIndicator size="small" color="#0D4C92" />
+                    ) : incomingRequests.length === 0 ? (
+                        <Text style={styles.value}>No requests right now</Text>
+                    ) : (
+                        incomingRequests.map((req) => (
+                            <View key={req.requestId} style={styles.requestRow}>
+                                <Text style={styles.requestText}>
+                                    {req.fromUser?.displayName || req.fromUser?.username || req.fromId}
+                                </Text>
+                                <View style={styles.requestActions}>
+                                    <TouchableOpacity
+                                        style={[styles.friendActionButton, styles.acceptButton]}
+                                        onPress={() => acceptFriendRequest(req.requestId)}
+                                    >
+                                        <Text style={styles.friendActionText}>Accept</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={[styles.friendActionButton, styles.declineButton]}
+                                        onPress={() => declineFriendRequest(req.requestId)}
+                                    >
+                                        <Text style={styles.friendActionText}>Decline</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        ))
+                    )}
+
+                    <Text style={[styles.sectionTitle, { marginTop: 16 }]}>Friends</Text>
+                    {friends.length === 0 ? (
+                        <Text style={styles.value}>No friends yet. Add some from feed.</Text>
+                    ) : (
+                        friends.map((friend) => (
+                            <View key={friend?.uid || friend?.id || friend?.username} style={styles.requestRow}>
+                                <Text style={styles.requestText}>{friend?.displayName || friend?.username || "Username"}</Text>
+                            </View>
+                        ))
                     )}
                 </View>
 
@@ -278,6 +434,46 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 16,
         textDecorationLine: 'underline',
+    },
+    sectionTitle: {
+        fontSize: 18,
+        fontWeight: '700',
+        color: '#0D4C92',
+        marginBottom: 8,
+    },
+    requestRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: 10,
+    },
+    requestText: {
+        fontSize: 14,
+        color: '#333',
+        flex: 1,
+    },
+    requestActions: {
+        flexDirection: 'row',
+        gap: 8,
+        marginLeft: 10,
+    },
+    friendActionButton: {
+        paddingHorizontal: 10,
+        paddingVertical: 6,
+        borderRadius: 14,
+        minWidth: 74,
+        alignItems: 'center',
+    },
+    acceptButton: {
+        backgroundColor: '#28a745',
+    },
+    declineButton: {
+        backgroundColor: '#dc3545',
+    },
+    friendActionText: {
+        color: '#fff',
+        fontSize: 12,
+        fontWeight: '700',
     },
 });
 
