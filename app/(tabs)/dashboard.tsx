@@ -1,8 +1,11 @@
 import { Ionicons } from "@expo/vector-icons";
 import {
+  addDoc,
   collection,
+  deleteDoc,
   doc,
   getDocs,
+  orderBy,
   query,
   serverTimestamp,
   setDoc,
@@ -26,7 +29,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { auth, db, dc } from "../../services/firebaseConfig";
-import { listPosts } from "../../src/dataconnect-generated";
+import { getUserProfile, listPosts } from "../../src/dataconnect-generated";
 
 type Comment = {
   id: string;
@@ -61,6 +64,7 @@ export default function Dashboard() {
   const [posts, setPosts] = useState<FeedPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [currentUsername, setCurrentUsername] = useState<string>("");
 
   // like state
   const [likedPosts, setLikedPosts] = useState<Record<string, boolean>>({});
@@ -102,6 +106,12 @@ export default function Dashboard() {
       });
       setLikeCounts(initialCounts);
       setComments(initialComments);
+
+      try {
+        await loadPostInteractions(sorted.map((p) => p.id));
+      } catch (error) {
+        console.error("Error loading post interactions:", error);
+      }
     } catch (error) {
       console.error("Error loading posts:", error);
     } finally {
@@ -110,13 +120,75 @@ export default function Dashboard() {
     }
   }, []);
 
+  const loadPostInteractions = useCallback(async (postIds: string[]) => {
+    if (!postIds.length) return;
+
+    const currentUser = auth.currentUser;
+    const currentUserId = currentUser?.uid;
+    const likeState: Record<string, boolean> = {};
+    const counts: Record<string, number> = {};
+    const loadedComments: Record<string, Comment[]> = {};
+
+    for (const postId of postIds) {
+      const likeQuery = query(collection(db, "likes"), where("postId", "==", postId));
+      const likesSnapshot = await getDocs(likeQuery);
+      counts[postId] = likesSnapshot.size;
+      likeState[postId] = likesSnapshot.docs.some(
+        (likeDoc) => likeDoc.data()?.userId === currentUserId
+      );
+
+      const commentQuery = query(
+        collection(db, "comments"),
+        where("postId", "==", postId),
+        orderBy("createdAt", "asc")
+      );
+      const commentsSnapshot = await getDocs(commentQuery);
+      loadedComments[postId] = commentsSnapshot.docs.map((commentDoc) => {
+        const data = commentDoc.data();
+        return {
+          id: commentDoc.id,
+          username: data.username || "Anonymous",
+          text: data.text || "",
+          createdAt:
+            data.createdAt && data.createdAt.toDate
+              ? data.createdAt.toDate().toISOString()
+              : new Date().toISOString(),
+        };
+      });
+    }
+
+    setLikeCounts(counts);
+    setLikedPosts(likeState);
+    setComments(loadedComments);
+  }, []);
+
+  const loadCurrentUserProfile = useCallback(async () => {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    try {
+      const { data } = await getUserProfile(dc, { id: user.uid });
+      setCurrentUsername(
+        data?.user?.username || user.displayName || user.email?.split("@")[0] || "You"
+      );
+    } catch (error) {
+      console.error("Failed to load current user profile:", error);
+      setCurrentUsername(user.displayName || user.email?.split("@")[0] || "You");
+    }
+  }, []);
+
   useEffect(() => {
     fetchPosts();
   }, [fetchPosts]);
 
+  useEffect(() => {
+    loadCurrentUserProfile();
+  }, [loadCurrentUserProfile]);
+
   const onRefresh = async () => {
     setRefreshing(true);
     await fetchPosts();
+    await loadCurrentUserProfile();
     await loadSentFriendRequests();
   };
 
@@ -183,13 +255,41 @@ export default function Dashboard() {
     }
   };
 
-  const handleLike = (postId: string) => {
+  const handleLike = async (postId: string) => {
+    const user = auth.currentUser;
+    if (!user) {
+      Alert.alert("Not signed in", "Please sign in to like posts.");
+      return;
+    }
+
     const isLiked = likedPosts[postId] ?? false;
+    const likeDocId = `${postId}_${user.uid}`;
+
     setLikedPosts((prev) => ({ ...prev, [postId]: !isLiked }));
     setLikeCounts((prev) => ({
       ...prev,
       [postId]: (prev[postId] ?? 0) + (isLiked ? -1 : 1),
     }));
+
+    try {
+      if (isLiked) {
+        await deleteDoc(doc(db, "likes", likeDocId));
+      } else {
+        await setDoc(doc(db, "likes", likeDocId), {
+          userId: user.uid,
+          postId,
+          createdAt: serverTimestamp(),
+        });
+      }
+    } catch (error) {
+      console.error("Failed to update like:", error);
+      Alert.alert("Error", "Could not update like. Please try again.");
+      setLikedPosts((prev) => ({ ...prev, [postId]: isLiked }));
+      setLikeCounts((prev) => ({
+        ...prev,
+        [postId]: (prev[postId] ?? 0) + (isLiked ? 1 : -1),
+      }));
+    }
   };
 
   const handleCommentToggle = (postId: string) => {
@@ -204,24 +304,45 @@ export default function Dashboard() {
     }
   };
 
-  const handlePostComment = (postId: string, username: string) => {
+  const handlePostComment = async (postId: string) => {
+    const user = auth.currentUser;
+    if (!user) {
+      Alert.alert("Not signed in", "Please sign in to comment.");
+      return;
+    }
+
     const text = (commentText[postId] ?? "").trim();
     if (!text) return;
 
+    const commenter =
+      currentUsername || user.displayName || user.email?.split("@")[0] || "You";
+
     const newComment: Comment = {
       id: Date.now().toString(),
-      username,
+      username: commenter,
       text,
       createdAt: new Date().toISOString(),
     };
 
-    setComments((prev) => ({
-      ...prev,
-      [postId]: [...(prev[postId] ?? []), newComment],
-    }));
+    try {
+      await addDoc(collection(db, "comments"), {
+        postId,
+        userId: user.uid,
+        username: commenter,
+        text,
+        createdAt: serverTimestamp(),
+      });
 
-    setCommentText((prev) => ({ ...prev, [postId]: "" }));
-    setCommentInputVisible((prev) => ({ ...prev, [postId]: false }));
+      setComments((prev) => ({
+        ...prev,
+        [postId]: [...(prev[postId] ?? []), newComment],
+      }));
+      setCommentText((prev) => ({ ...prev, [postId]: "" }));
+      setCommentInputVisible((prev) => ({ ...prev, [postId]: false }));
+    } catch (error) {
+      console.error("Failed to post comment:", error);
+      Alert.alert("Error", "Could not post comment. Please try again.");
+    }
   };
 
   const formatLocation = (post: FeedPost) => {
@@ -365,6 +486,11 @@ export default function Dashboard() {
                       </TouchableOpacity>
                     </View>
                   </View>
+                  <View style={styles.postStatsRow}>
+                    <Text style={[styles.postStatsText, { color: theme.subtext }]}> 
+                      {likeCount} like{likeCount === 1 ? "" : "s"} · {commentCount} comment{commentCount === 1 ? "" : "s"}
+                    </Text>
+                  </View>
 
                   {/* Post Body */}
                   <View style={styles.postBody}>
@@ -424,12 +550,12 @@ export default function Dashboard() {
                         onChangeText={(text) =>
                           setCommentText((prev) => ({ ...prev, [post.id]: text }))
                         }
-                        onSubmitEditing={() => handlePostComment(post.id, post.user.username)}
+                        onSubmitEditing={() => handlePostComment(post.id)}
                         returnKeyType="send"
                         multiline={false}
                       />
                       <TouchableOpacity
-                        onPress={() => handlePostComment(post.id, post.user.username)}
+                        onPress={() => handlePostComment(post.id)}
                         disabled={!(commentText[post.id] ?? "").trim()}
                       >
                         <Ionicons
@@ -630,5 +756,13 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 14,
     paddingVertical: 6,
+  },
+  postStatsRow: {
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+  },
+  postStatsText: {
+    fontSize: 13,
+    lineHeight: 18,
   },
 });
