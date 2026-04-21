@@ -83,7 +83,8 @@ mutation DeclineFriendRequest(
   friendRequest_delete(id: $id)
 }
 
-mutation CreateLike($postId: UUID!, $userId: String!, $createdAt: Timestamp!) {
+mutation CreateLike($postId: UUID!, $userId: String!, $createdAt: Timestamp!)
+@auth(level: USER) {
   like_insert(data: {
     postId: $postId
     userId: $userId
@@ -91,7 +92,8 @@ mutation CreateLike($postId: UUID!, $userId: String!, $createdAt: Timestamp!) {
   })
 }
 
-mutation CreateComment($postId: UUID!, $userId: String!, $content: String!, $createdAt: Timestamp!) {
+mutation CreateComment($postId: UUID!, $userId: String!, $content: String!, $createdAt: Timestamp!)
+@auth(level: USER) {
   comment_insert(data: {
     postId: $postId
     userId: $userId
