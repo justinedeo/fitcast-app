@@ -28,13 +28,13 @@ type Comment @table {
   user: User!
   post: Post!
   content: String!
-  createdAt: Timestamp!
+  createdAt: Timestamp! @default(expr: "request.time")
 }
 
 type Like @table(key: ["user", "post"]) {
   user: User!
   post: Post!
-  createdAt: Timestamp!
+  createdAt: Timestamp! @default(expr: "request.time")
 }
 
 type OutfitRecommendation @table {
@@ -52,4 +52,11 @@ type SavedOutfit @table(key: ["user", "outfitRecommendation"]) {
   outfitRecommendation: OutfitRecommendation!
   createdAt: Timestamp!
   notes: String
+}
+
+type FriendRequest @table {
+  fromUser: User!
+  toUser: User!
+  status: String!
+  createdAt: Timestamp! @default(expr: "request.time")
 }

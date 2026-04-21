@@ -55,3 +55,47 @@ mutation CreatePost(
     wornAt: $wornAt
   })
 }
+
+mutation SendFriendRequest(
+  $fromUserId: String!,
+  $toUserId: String!
+  $createdAt: Timestamp!
+) @auth(level: USER) {
+  friendRequest_insert(data: {
+    fromUser: { id: $fromUserId }
+    toUser: { id: $toUserId }
+    status: "pending"
+    createdAt: $createdAt
+  })
+}
+
+mutation AcceptFriendRequest(
+  $id: UUID!
+) @auth(level: USER) {
+  friendRequest_update(id: $id, data: {
+    status: "accepted"
+  })
+}
+
+mutation DeclineFriendRequest(
+  $id: UUID!
+) @auth(level: USER) {
+  friendRequest_delete(id: $id)
+}
+
+mutation CreateLike($postId: UUID!, $userId: String!, $createdAt: Timestamp!) {
+  like_insert(data: {
+    postId: $postId
+    userId: $userId
+    createdAt: $createdAt
+  })
+}
+
+mutation CreateComment($postId: UUID!, $userId: String!, $content: String!, $createdAt: Timestamp!) {
+  comment_insert(data: {
+    postId: $postId
+    userId: $userId
+    content: $content
+    createdAt: $createdAt
+  })
+}
