@@ -12,7 +12,7 @@ import {
     View,
 } from "react-native";
 
-import { createPost } from "../../dataconnect/example/dataconnect-generated";
+import { createPost } from "../../dataconnect/example/.dataconnect-generated";
 import { auth, dc, storage } from "../../services/firebaseConfig";
 
 export default function Post() {

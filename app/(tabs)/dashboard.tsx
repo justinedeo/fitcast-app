@@ -1,16 +1,4 @@
 import { Ionicons } from "@expo/vector-icons";
-import {
-    addDoc,
-    collection,
-    deleteDoc,
-    doc,
-    getDocs,
-    orderBy,
-    query,
-    serverTimestamp,
-    setDoc,
-    where,
-} from "firebase/firestore";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
     ActivityIndicator,
@@ -27,9 +15,21 @@ import {
     useColorScheme,
     View,
 } from "react-native";
+import {
+  createLike,
+  deleteLike,
+  createComment,
+  getLikesForPost,
+  getCommentsForPost,
+} from "../../dataconnect/example/.dataconnect-generated";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { getUserProfile, listPosts } from "../../dataconnect/example/dataconnect-generated";
-import { auth, db, dc } from "../../services/firebaseConfig";
+//import { getUserProfile, listPosts } from "@/src/dataconnect-generated";
+import { auth, dc } from "../../services/firebaseConfig";
+import {
+  getUserProfile,
+  listPosts,
+  sendFriendRequest as sendFriendRequestMutation,
+} from "../../dataconnect/example/.dataconnect-generated";
 
 type Comment = {
   id: string;
@@ -55,6 +55,21 @@ type FeedPost = {
     displayName?: string | null;
     profilePictureUrl?: string | null;
   };
+  likes?: {
+    user?: {
+      id: string;
+    } | null;
+  }[];
+  comments?: {
+    id: string;
+    content: string;
+    createdAt?: string | null;
+    user?: {
+      id: string;
+      username?: string | null;
+      displayName?: string | null;
+    } | null;
+  }[];
 };
 
 export default function Dashboard() {
@@ -87,141 +102,140 @@ export default function Dashboard() {
     input: isDark ? "#1E1E1E" : "#F3F4F6",
   };
 
-  const fetchPosts = useCallback(async () => {
-    try {
-      const { data } = await listPosts(dc);
-      const feedPosts = data?.posts ?? [];
+const loadCurrentUserProfile = useCallback(async () => {
+  const user = auth.currentUser;
+  if (!user) return;
 
-      const sorted = [...feedPosts].sort((a, b) => {
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      });
-
-      setPosts(sorted as FeedPost[]);
-
-      const initialCounts: Record<string, number> = {};
-      const initialComments: Record<string, Comment[]> = {};
-      sorted.forEach((p) => {
-        initialCounts[p.id] = 0;
-        initialComments[p.id] = [];
-      });
-      setLikeCounts(initialCounts);
-      setComments(initialComments);
-
-      try {
-        await loadPostInteractions(sorted.map((p) => p.id));
-      } catch (error) {
-        console.error("Error loading post interactions:", error);
-      }
-    } catch (error) {
-      console.error("Error loading posts:", error);
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
+  try {
+    const { data } = await getUserProfile(dc, { id: user.uid });
+    const profile = data?.user;
+    if (profile?.username) {
+      setCurrentUsername(profile.username);
+    } else if (profile?.displayName) {
+      setCurrentUsername(profile.displayName);
     }
-  }, []);
+  } catch (error) {
+    console.error("Error loading current user profile:", error);
+  }
+}, []);
 
-  const loadPostInteractions = useCallback(async (postIds: string[]) => {
+const fetchPosts = useCallback(async () => {
+  console.log("fetchPosts: starting");
+  try {
+    const { data } = await listPosts(dc);
+    const feedPosts = (data?.posts ?? []) as FeedPost[];
+
+    setPosts(feedPosts);
+
+    const initialLiked: Record<string, boolean> = {};
+    const initialCounts: Record<string, number> = {};
+    const initialComments: Record<string, Comment[]> = {};
+
+    feedPosts.forEach((post) => {
+      initialLiked[post.id] = false;
+      initialCounts[post.id] = 0;
+      initialComments[post.id] = [];
+    });
+
+    setLikedPosts(initialLiked);
+    setLikeCounts(initialCounts);
+    setComments(initialComments);
+  } catch (error) {
+    console.error("Error loading posts:", error);
+  } finally {
+    setLoading(false);
+    setRefreshing(false);
+  }
+}, []);
+
+  const loadPostInteractions = useCallback(
+  async (postIds: string[]) => {
+    const currentUser = auth.currentUser;
     if (!postIds.length) return;
 
-    const currentUser = auth.currentUser;
-    const currentUserId = currentUser?.uid;
-    const likeState: Record<string, boolean> = {};
-    const counts: Record<string, number> = {};
-    const loadedComments: Record<string, Comment[]> = {};
-
-    for (const postId of postIds) {
-      const likeQuery = query(collection(db, "likes"), where("postId", "==", postId));
-      const likesSnapshot = await getDocs(likeQuery);
-      counts[postId] = likesSnapshot.size;
-      likeState[postId] = likesSnapshot.docs.some(
-        (likeDoc) => likeDoc.data()?.userId === currentUserId
-      );
-
-      const commentQuery = query(
-        collection(db, "comments"),
-        where("postId", "==", postId),
-        orderBy("createdAt", "asc")
-      );
-      const commentsSnapshot = await getDocs(commentQuery);
-      loadedComments[postId] = commentsSnapshot.docs.map((commentDoc) => {
-        const data = commentDoc.data();
-        return {
-          id: commentDoc.id,
-          username: data.username || "Anonymous",
-          text: data.text || "",
-          createdAt:
-            data.createdAt && data.createdAt.toDate
-              ? data.createdAt.toDate().toISOString()
-              : new Date().toISOString(),
-        };
-      });
-    }
-
-    setLikeCounts(counts);
-    setLikedPosts(likeState);
-    setComments(loadedComments);
-  }, []);
-
-  const loadCurrentUserProfile = useCallback(async () => {
-    const user = auth.currentUser;
-    if (!user) return;
-
     try {
-      const { data } = await getUserProfile(dc, { id: user.uid });
-      setCurrentUsername(
-        data?.user?.username || user.displayName || user.email?.split("@")[0] || "You"
+      const likesResults = await Promise.all(
+        postIds.map((postId) => getLikesForPost(dc, { postId: postId as any }))
       );
+      const commentsResults = await Promise.all(
+        postIds.map((postId) => getCommentsForPost(dc, { postId: postId as any }))
+      );
+
+      const nextLiked: Record<string, boolean> = {};
+      const nextCounts: Record<string, number> = {};
+      const nextComments: Record<string, Comment[]> = {};
+
+      postIds.forEach((postId, index) => {
+        const likes = likesResults[index].data?.likes ?? [];
+        const postComments = commentsResults[index].data?.comments ?? [];
+
+        nextCounts[postId] = likes.length;
+        nextLiked[postId] =
+          !!currentUser && likes.some((like) => like.user?.id === currentUser.uid);
+
+        nextComments[postId] = postComments.map((c) => ({
+  id: c.id,
+  username:
+    c.user?.displayName ||
+    c.user?.username ||
+    c.user?.id ||
+    "User",
+  text: c.content,
+  createdAt: c.createdAt ?? "",
+}));
+      });
+
+      setLikedPosts(nextLiked);
+      setLikeCounts(nextCounts);
+      setComments(nextComments);
     } catch (error) {
-      console.error("Failed to load current user profile:", error);
-      setCurrentUsername(user.displayName || user.email?.split("@")[0] || "You");
+      console.error("Error loading post interactions:", error);
     }
-  }, []);
+  },
+  []
+);
 
+// Friend-request sent state (per target user)
+const [friendRequestsSent, setFriendRequestsSent] = useState<
+  Record<string, boolean>
+>({});
+
+// Load which users I've already sent a request to
+const loadSentFriendRequests = useCallback(async () => {
+  const user = auth.currentUser;
+  if (!user) return;
+
+  try {
+    // TEMP: still Firestore-backed; can be moved to Data Connect later
+    const sent: Record<string, boolean> = {};
+    // If you removed Firestore entirely, you can just leave this empty
+    // and manually mark friendRequestsSent in handleSendFriendRequest.
+    setFriendRequestsSent(sent);
+  } catch (error) {
+    console.error("Error loading sent friend requests:", error);
+  }
+}, []);
+
+// Refresh handler for pull-to-refresh
+const onRefresh = async () => {
+  setRefreshing(true);
+  await fetchPosts();
+  await loadCurrentUserProfile();
+  await loadSentFriendRequests();
+};
+
+  // useEffect(() => {
+  //   loadSentFriendRequests();
+  // }, [loadSentFriendRequests]);
   useEffect(() => {
-    fetchPosts();
-  }, [fetchPosts]);
-
-  useEffect(() => {
-    loadCurrentUserProfile();
-  }, [loadCurrentUserProfile]);
-
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await fetchPosts();
+  (async () => {
     await loadCurrentUserProfile();
+    await fetchPosts();
     await loadSentFriendRequests();
-  };
+  })();
+}, [loadCurrentUserProfile, fetchPosts, loadSentFriendRequests]);
 
-  const [friendRequestsSent, setFriendRequestsSent] = useState<Record<string, boolean>>({});
-
-  const loadSentFriendRequests = useCallback(async () => {
-    const user = auth.currentUser;
-    if (!user) return;
-
-    try {
-      const q = query(
-        collection(db, "friendRequests"),
-        where("fromId", "==", user.uid)
-      );
-      const snap = await getDocs(q);
-      const sent: Record<string, boolean> = {};
-      snap.forEach((doc) => {
-        const data = doc.data();
-        if (data?.toId) {
-          sent[data.toId] = true;
-        }
-      });
-      setFriendRequestsSent(sent);
-    } catch (error) {
-      console.error("Error loading sent friend requests:", error);
-    }
-  }, []);
-
-  useEffect(() => {
-    loadSentFriendRequests();
-  }, [loadSentFriendRequests]);
-
-  const sendFriendRequest = async (toUserId: string, toUsername?: string) => {
+  const handleSendFriendRequest = async (toUserId: string, toUsername?: string) => {
     const fromUser = auth.currentUser;
     if (!fromUser) {
       Alert.alert("Not signed in", "Please sign in to send friend requests.");
@@ -239,58 +253,65 @@ export default function Dashboard() {
     }
 
     try {
-      const requestId = `${fromUser.uid}_${toUserId}`;
-      await setDoc(doc(db, "friendRequests", requestId), {
-        fromId: fromUser.uid,
-        toId: toUserId,
-        status: "pending",
-        createdAt: serverTimestamp(),
-      });
+      // const now = new Date().toISOString(); // TimestampString
 
-      setFriendRequestsSent((prev) => ({ ...prev, [toUserId]: true }));
-      Alert.alert("Request sent", `Friend request sent to ${toUsername ?? "user"}.`);
-    } catch (error) {
-      console.error("Failed to send friend request:", error);
-      Alert.alert("Error", "Could not send friend request.");
-    }
+      await sendFriendRequestMutation(dc, {
+        fromUserId: fromUser.uid,
+        toUserId,
+        createdAt: new Date().toISOString(),
+    } as any );
+
+  setFriendRequestsSent((prev: Record<string, boolean>) => ({ ...prev, [toUserId]: true }));
+  Alert.alert("Request sent", `Friend request sent to ${toUsername ?? "user"}.`);
+} catch (error) {
+  console.error("Failed to send friend request:", error);
+  Alert.alert("Error", "Could not send friend request.");
+}
   };
 
-  const handleLike = async (postId: string) => {
-    const user = auth.currentUser;
-    if (!user) {
-      Alert.alert("Not signed in", "Please sign in to like posts.");
-      return;
+const handleLike = async (postId: string) => {
+  const user = auth.currentUser;
+  if (!user) {
+    Alert.alert("Not signed in", "Please sign in to like posts.");
+    return;
+  }
+
+  const isLiked = likedPosts[postId] ?? false;
+
+  // Optimistic UI update
+  setLikedPosts((prev) => ({ ...prev, [postId]: !isLiked }));
+  setLikeCounts((prev) => ({
+    ...prev,
+    [postId]: (prev[postId] ?? 0) + (isLiked ? -1 : 1),
+  }));
+
+  try {
+    if (isLiked) {
+      // Unlike
+      await deleteLike(dc, {
+        postId: postId as any,
+        userId: user.uid,
+      });
+    } else {
+      // Like
+      await createLike(dc, {
+        postId: postId as any,
+        userId: user.uid,
+        createdAt: new Date().toISOString(),
+      });
     }
+  } catch (error) {
+    console.error("Failed to update like:", error);
+    Alert.alert("Error", "Could not update like. Please try again.");
 
-    const isLiked = likedPosts[postId] ?? false;
-    const likeDocId = `${postId}_${user.uid}`;
-
-    setLikedPosts((prev) => ({ ...prev, [postId]: !isLiked }));
+    // Roll back optimistic update
+    setLikedPosts((prev) => ({ ...prev, [postId]: isLiked }));
     setLikeCounts((prev) => ({
       ...prev,
-      [postId]: (prev[postId] ?? 0) + (isLiked ? -1 : 1),
+      [postId]: (prev[postId] ?? 0) + (isLiked ? 1 : -1),
     }));
-
-    try {
-      if (isLiked) {
-        await deleteDoc(doc(db, "likes", likeDocId));
-      } else {
-        await setDoc(doc(db, "likes", likeDocId), {
-          userId: user.uid,
-          postId,
-          createdAt: serverTimestamp(),
-        });
-      }
-    } catch (error) {
-      console.error("Failed to update like:", error);
-      Alert.alert("Error", "Could not update like. Please try again.");
-      setLikedPosts((prev) => ({ ...prev, [postId]: isLiked }));
-      setLikeCounts((prev) => ({
-        ...prev,
-        [postId]: (prev[postId] ?? 0) + (isLiked ? 1 : -1),
-      }));
-    }
-  };
+  }
+};
 
   const handleCommentToggle = (postId: string) => {
     const isVisible = commentInputVisible[postId] ?? false;
@@ -304,46 +325,58 @@ export default function Dashboard() {
     }
   };
 
-  const handlePostComment = async (postId: string) => {
-    const user = auth.currentUser;
-    if (!user) {
-      Alert.alert("Not signed in", "Please sign in to comment.");
-      return;
-    }
+const handlePostComment = async (postId: string) => {
+  const user = auth.currentUser;
+  if (!user) {
+    Alert.alert("Not signed in", "Please sign in to comment.");
+    return;
+  }
 
-    const text = (commentText[postId] ?? "").trim();
-    if (!text) return;
+  const text = (commentText[postId] ?? "").trim();
+  if (!text) return;
 
-    const commenter =
-      currentUsername || user.displayName || user.email?.split("@")[0] || "You";
+  const commenter =
+    currentUsername ||
+    user.displayName ||
+    user.email?.split("@")[0] ||
+    "You";
 
-    const newComment: Comment = {
-      id: Date.now().toString(),
-      username: commenter,
-      text,
-      createdAt: new Date().toISOString(),
-    };
-
-    try {
-      await addDoc(collection(db, "comments"), {
-        postId,
-        userId: user.uid,
-        username: commenter,
-        text,
-        createdAt: serverTimestamp(),
-      });
-
-      setComments((prev) => ({
-        ...prev,
-        [postId]: [...(prev[postId] ?? []), newComment],
-      }));
-      setCommentText((prev) => ({ ...prev, [postId]: "" }));
-      setCommentInputVisible((prev) => ({ ...prev, [postId]: false }));
-    } catch (error) {
-      console.error("Failed to post comment:", error);
-      Alert.alert("Error", "Could not post comment. Please try again.");
-    }
+  // Optimistic local comment
+  const tempComment: Comment = {
+    id: `temp-${Date.now()}`,
+    username: commenter,
+    text,
+    createdAt: new Date().toISOString(),
   };
+
+  setComments((prev) => ({
+    ...prev,
+    [postId]: [...(prev[postId] ?? []), tempComment],
+  }));
+  setCommentText((prev) => ({ ...prev, [postId]: "" }));
+  setCommentInputVisible((prev) => ({ ...prev, [postId]: false }));
+
+  try {
+    await createComment(dc, {
+      postId: postId as any,
+      userId: user.uid,
+      content: text,
+      createdAt: new Date().toISOString(),
+    });
+
+    // Refresh from server so we have real IDs/order
+    await loadPostInteractions([postId]);
+  } catch (error) {
+    console.error("Failed to post comment:", error);
+    Alert.alert("Error", "Could not post comment. Please try again.");
+
+    // Roll back optimistic comment
+    setComments((prev) => ({
+      ...prev,
+      [postId]: (prev[postId] ?? []).filter((c) => c.id !== tempComment.id),
+    }));
+  }
+};
 
   const formatLocation = (post: FeedPost) => {
     if (post.locationTag) return post.locationTag;
@@ -392,6 +425,12 @@ export default function Dashboard() {
             </View>
           ) : (
             posts.map((post) => {
+              console.log("Render post", {
+                postId: post.id,
+                postUserId: post.user?.id,
+                currentUser: auth.currentUser?.uid,
+                hasUser: !!post.user,
+              });
               const liked = likedPosts[post.id] ?? false;
               const likeCount = likeCounts[post.id] ?? 0;
               const postComments = comments[post.id] ?? [];
@@ -423,9 +462,9 @@ export default function Dashboard() {
                         </Text>
                         {auth.currentUser?.uid !== post.user.id && (
                           <TouchableOpacity
-                            style={styles.friendRequestButton}
-                            onPress={() => sendFriendRequest(post.user.id, post.user.username)}
-                            disabled={friendRequestsSent[post.user.id]}
+                              style={styles.friendRequestButton}
+                              onPress={() => handleSendFriendRequest(post.user.id, post.user.username)}
+                              disabled={friendRequestsSent[post.user.id]}
                           >
                             <Text style={styles.friendRequestText}>
                               {friendRequestsSent[post.user.id] ? "Request Sent" : "Add Friend"}

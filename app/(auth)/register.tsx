@@ -1,4 +1,5 @@
-import { createUser } from "@/dataconnect/example/dataconnect-generated";
+// import { createUser } from "@/dataconnect/example/dataconnect-generated";
+import { createUser } from "@/dataconnect/example/.dataconnect-generated";
 import { router } from "expo-router"; // Screen nav
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import React, { FC, useState } from 'react';

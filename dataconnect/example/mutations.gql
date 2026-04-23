@@ -59,13 +59,11 @@ mutation CreatePost(
 mutation SendFriendRequest(
   $fromUserId: String!,
   $toUserId: String!
-  $createdAt: Timestamp!
 ) @auth(level: USER) {
   friendRequest_insert(data: {
     fromUser: { id: $fromUserId }
     toUser: { id: $toUserId }
     status: "pending"
-    createdAt: $createdAt
   })
 }
 
@@ -89,6 +87,13 @@ mutation CreateLike($postId: UUID!, $userId: String!, $createdAt: Timestamp!)
     postId: $postId
     userId: $userId
     createdAt: $createdAt
+  })
+}
+
+mutation DeleteLike($postId: UUID!, $userId: String!) @auth(level: USER) {
+  like_delete(key: {
+    userId: $userId
+    postId: $postId
   })
 }
 

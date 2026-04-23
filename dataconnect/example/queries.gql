@@ -1,5 +1,5 @@
 query listPosts @auth(level: PUBLIC) {
-  posts {
+  posts(orderBy: [{ createdAt: DESC }]) {
     id
     content
     imageUrl
@@ -50,7 +50,9 @@ query getLikesForPost($postId: UUID!) @auth(level: PUBLIC) {
 }
 
 query getCommentsForPost($postId: UUID!) @auth(level: PUBLIC) {
-  comments(where: { postId: { eq: $postId } }) {
+  comments(where: { postId: { eq: $postId } }
+  orderBy: [{ createdAt: DESC }]
+  ) {
     id
     postId
     content

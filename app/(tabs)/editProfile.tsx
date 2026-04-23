@@ -17,7 +17,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { getUserProfile, updateUserProfile } from "../../dataconnect/example/dataconnect-generated";
+import { getUserProfile, updateUserProfile } from "../../dataconnect/example/.dataconnect-generated";
 import { auth, dc, storage } from "../../services/firebaseConfig";
 
 export default function EditProfile() {
