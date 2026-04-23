@@ -102,11 +102,13 @@ query GetFriends($userId: String!) @auth(level: USER) {
       id
       username
       displayName
+      profilePictureUrl
     }
     toUser {
       id
       username
       displayName
+      profilePictureUrl
     }
   }
 }

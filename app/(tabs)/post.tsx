@@ -12,8 +12,8 @@ import {
     View,
 } from "react-native";
 
+import { createPost } from "../../dataconnect/example/dataconnect-generated";
 import { auth, dc, storage } from "../../services/firebaseConfig";
-import { createPost } from "../../src/dataconnect-generated";
 
 export default function Post() {
   const [imageUri, setImageUri] = useState<string | null>(null);

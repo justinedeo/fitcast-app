@@ -17,8 +17,8 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { getUserProfile, updateUserProfile } from "../../dataconnect/example/dataconnect-generated";
 import { auth, dc, storage } from "../../services/firebaseConfig";
-import { getUserProfile, updateUserProfile } from "../../src/dataconnect-generated";
 
 export default function EditProfile() {
   const colorScheme = useColorScheme();
