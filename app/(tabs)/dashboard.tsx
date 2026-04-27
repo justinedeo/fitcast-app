@@ -123,7 +123,11 @@ const fetchPosts = useCallback(async () => {
   console.log("fetchPosts: starting");
   try {
     const { data } = await listPosts(dc);
-    const feedPosts = (data?.posts ?? []) as FeedPost[];
+    let feedPosts = (data?.posts ?? []) as FeedPost[];
+
+    feedPosts = [...feedPosts].sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
 
     setPosts(feedPosts);
 
