@@ -1,11 +1,11 @@
 specVersion: "v1"
 serviceId: "fitcast-app"
 location: "us-east4"
-schemas:
-  - source: "./schema"
-    datasource:
-      postgresql:
-        database: "fitcast-7533a-database"
-        cloudSql:
-          instanceId: "fitcast-7533a-instance"
-connectorDirs: ["./example"]
+schema:
+  source: "./schema"
+  datasource:
+    postgresql:
+      database: "fitcast-7533a-database"
+      cloudSql:
+        instanceId: "fitcast-7533a-instance"
+connectorDirs: [ "./example" ]

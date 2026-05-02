@@ -492,7 +492,6 @@ The `CreateUser` Mutation requires an argument of type `CreateUserVariables`, wh
 
 ```javascript
 export interface CreateUserVariables {
-  id: string;
   username: string;
   email: string;
   displayName?: string | null;
@@ -545,14 +544,13 @@ export default function CreateUserComponent() {
   // After calling the Mutation hook function, you must call `UseMutationResult.mutate()` to execute the Mutation.
   // The `useCreateUser` Mutation requires an argument of type `CreateUserVariables`:
   const createUserVars: CreateUserVariables = {
-    id: ..., 
     username: ..., 
     email: ..., 
     displayName: ..., // optional
   };
   mutation.mutate(createUserVars);
   // Variables can be defined inline as well.
-  mutation.mutate({ id: ..., username: ..., email: ..., displayName: ..., });
+  mutation.mutate({ username: ..., email: ..., displayName: ..., });
 
   // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
   const options = {
@@ -592,7 +590,6 @@ The `UpdateUserProfile` Mutation requires an argument of type `UpdateUserProfile
 
 ```javascript
 export interface UpdateUserProfileVariables {
-  id: string;
   username: string;
   email: string;
   displayName?: string | null;
@@ -648,7 +645,6 @@ export default function UpdateUserProfileComponent() {
   // After calling the Mutation hook function, you must call `UseMutationResult.mutate()` to execute the Mutation.
   // The `useUpdateUserProfile` Mutation requires an argument of type `UpdateUserProfileVariables`:
   const updateUserProfileVars: UpdateUserProfileVariables = {
-    id: ..., 
     username: ..., 
     email: ..., 
     displayName: ..., // optional
@@ -658,7 +654,7 @@ export default function UpdateUserProfileComponent() {
   };
   mutation.mutate(updateUserProfileVars);
   // Variables can be defined inline as well.
-  mutation.mutate({ id: ..., username: ..., email: ..., displayName: ..., bio: ..., location: ..., profilePictureUrl: ..., });
+  mutation.mutate({ username: ..., email: ..., displayName: ..., bio: ..., location: ..., profilePictureUrl: ..., });
 
   // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
   const options = {

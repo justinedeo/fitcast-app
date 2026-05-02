@@ -1,11 +1,10 @@
 mutation CreateUser(
-  $id: String!,
   $username: String!,
   $email: String!,
-  $displayName: String
+  $displayName: String,
 ) @auth(level: USER) {
   user_insert(data: {
-    id: $id
+    id_expr: "auth.uid"
     username: $username
     email: $email
     displayName: $displayName
@@ -13,16 +12,17 @@ mutation CreateUser(
 }
 
 mutation UpdateUserProfile(
-  $id: String!,
   $username: String!,
   $email: String!,
   $displayName: String,
   $bio: String,
   $location: String,
-  $profilePictureUrl: String
+  $profilePictureUrl: String,
 ) @auth(level: USER) {
   user_upsert(data: {
-    id: $id
+    #id: $id
+    #userId: $user.uid,
+    id_expr: "auth.uid"
     username: $username
     email: $email
     displayName: $displayName

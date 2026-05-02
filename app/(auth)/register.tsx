@@ -1,9 +1,9 @@
-import { createUser } from "@fitcast/generated";
+import { createUser } from "../../src/dataconnect-generated";
 import { router } from "expo-router"; // Screen nav
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import React, { FC, useState } from 'react';
 import { Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { auth } from "../../services/firebaseConfig";
+import { auth, dc } from "../../services/firebaseConfig";
 
 const Register: FC = () => {
   // Form state
@@ -15,6 +15,7 @@ const Register: FC = () => {
   const [phone, setPhone] = useState<string>('');
   const [error, setError] = useState<string>('');
 
+
   const handleSignup = async (): Promise<void> => {
     console.log("Starting signup...")
     setError('');
@@ -24,15 +25,18 @@ const Register: FC = () => {
       return;
     }
 
+
+
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       // Store user profile in firestore
-      await createUser({
+      await createUser(dc, {
         id: user.uid,
         username: username,
         email: email,
-        displayName: fullName
+        displayName: fullName,
+        //phoneNumber: phone
       });
 
       // Sign the user out before redirecting to the home page

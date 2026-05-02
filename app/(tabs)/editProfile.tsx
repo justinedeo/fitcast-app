@@ -4,16 +4,16 @@ import { router } from "expo-router";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import React, { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    Alert,
-    Image,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    useColorScheme,
-    View,
+  ActivityIndicator,
+  Alert,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  useColorScheme,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -118,15 +118,18 @@ export default function EditProfile() {
       if (!user) return;
 
       setSaving(true);
+      console.log("1. Starting save process...");
 
       let photoUrl = profile?.profilePictureUrl || null;
 
       if (imageUri && imageUri !== profile?.profilePictureUrl) {
+        console.log("2. Uploading image...");
         photoUrl = await uploadImage(imageUri);
+        console.log("3. Image uploaded successfully:", photoUrl);
       }
 
+      console.log("4. Updating SQL database...");
       await updateUserProfile(dc, {
-        id: user.uid,
         username: profile?.username || user.email?.split("@")[0] || "user",
         email: user.email || "",
         displayName: displayName || null,
@@ -135,10 +138,16 @@ export default function EditProfile() {
         profilePictureUrl: photoUrl,
       });
 
-      Alert.alert("Saved!", "Your profile has been updated.");
-      router.back();
+      console.log("5. Save successful! Routing back...");
+
+      // Force the route back to the profile tab instead of relying on .back()
+      // Note: Adjust the "/(tabs)/profile" path to match your exact file structure if needed!
+      Alert.alert("Saved!", "Your profile has been updated.", [
+        { text: "OK", onPress: () => router.replace("/(tabs)/profile") }
+      ]);
+
     } catch (error) {
-      console.error("Error updating profile:", error);
+      console.error("CRITICAL ERROR during save:", error);
       Alert.alert("Error", "Failed to update profile.");
     } finally {
       setSaving(false);

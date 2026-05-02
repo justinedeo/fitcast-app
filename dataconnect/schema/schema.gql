@@ -9,6 +9,7 @@ type User @table {
   bio: String
   profilePictureUrl: String
   location: String
+  phoneNumber: String
 }
   
 type Post @table {

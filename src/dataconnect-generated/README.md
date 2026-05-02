@@ -67,7 +67,7 @@ Below are examples of how to use the `example` connector's generated functions t
 ## listPosts
 You can execute the `listPosts` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
-listPosts(): QueryPromise<ListPostsData, undefined>;
+listPosts(options?: ExecuteQueryOptions): QueryPromise<ListPostsData, undefined>;
 
 interface ListPostsRef {
   ...
@@ -78,7 +78,7 @@ export const listPostsRef: ListPostsRef;
 ```
 You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
 ```typescript
-listPosts(dc: DataConnect): QueryPromise<ListPostsData, undefined>;
+listPosts(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListPostsData, undefined>;
 
 interface ListPostsRef {
   ...
@@ -175,7 +175,7 @@ executeQuery(ref).then((response) => {
 ## getOutfits
 You can execute the `getOutfits` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
-getOutfits(vars: GetOutfitsVariables): QueryPromise<GetOutfitsData, GetOutfitsVariables>;
+getOutfits(vars: GetOutfitsVariables, options?: ExecuteQueryOptions): QueryPromise<GetOutfitsData, GetOutfitsVariables>;
 
 interface GetOutfitsRef {
   ...
@@ -186,7 +186,7 @@ export const getOutfitsRef: GetOutfitsRef;
 ```
 You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
 ```typescript
-getOutfits(dc: DataConnect, vars: GetOutfitsVariables): QueryPromise<GetOutfitsData, GetOutfitsVariables>;
+getOutfits(dc: DataConnect, vars: GetOutfitsVariables, options?: ExecuteQueryOptions): QueryPromise<GetOutfitsData, GetOutfitsVariables>;
 
 interface GetOutfitsRef {
   ...
@@ -287,7 +287,7 @@ executeQuery(ref).then((response) => {
 ## listAllUsers
 You can execute the `listAllUsers` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
-listAllUsers(): QueryPromise<ListAllUsersData, undefined>;
+listAllUsers(options?: ExecuteQueryOptions): QueryPromise<ListAllUsersData, undefined>;
 
 interface ListAllUsersRef {
   ...
@@ -298,7 +298,7 @@ export const listAllUsersRef: ListAllUsersRef;
 ```
 You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
 ```typescript
-listAllUsers(dc: DataConnect): QueryPromise<ListAllUsersData, undefined>;
+listAllUsers(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListAllUsersData, undefined>;
 
 interface ListAllUsersRef {
   ...
@@ -384,7 +384,7 @@ executeQuery(ref).then((response) => {
 ## GetUserProfile
 You can execute the `GetUserProfile` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
-getUserProfile(vars: GetUserProfileVariables): QueryPromise<GetUserProfileData, GetUserProfileVariables>;
+getUserProfile(vars: GetUserProfileVariables, options?: ExecuteQueryOptions): QueryPromise<GetUserProfileData, GetUserProfileVariables>;
 
 interface GetUserProfileRef {
   ...
@@ -395,7 +395,7 @@ export const getUserProfileRef: GetUserProfileRef;
 ```
 You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
 ```typescript
-getUserProfile(dc: DataConnect, vars: GetUserProfileVariables): QueryPromise<GetUserProfileData, GetUserProfileVariables>;
+getUserProfile(dc: DataConnect, vars: GetUserProfileVariables, options?: ExecuteQueryOptions): QueryPromise<GetUserProfileData, GetUserProfileVariables>;
 
 interface GetUserProfileRef {
   ...
@@ -547,7 +547,6 @@ The `CreateUser` mutation requires an argument of type `CreateUserVariables`, wh
 
 ```typescript
 export interface CreateUserVariables {
-  id: string;
   username: string;
   email: string;
   displayName?: string | null;
@@ -570,7 +569,6 @@ import { connectorConfig, createUser, CreateUserVariables } from '@firebasegen/e
 
 // The `CreateUser` mutation requires an argument of type `CreateUserVariables`:
 const createUserVars: CreateUserVariables = {
-  id: ..., 
   username: ..., 
   email: ..., 
   displayName: ..., // optional
@@ -580,7 +578,7 @@ const createUserVars: CreateUserVariables = {
 // You can use the `await` keyword to wait for the promise to resolve.
 const { data } = await createUser(createUserVars);
 // Variables can be defined inline as well.
-const { data } = await createUser({ id: ..., username: ..., email: ..., displayName: ..., });
+const { data } = await createUser({ username: ..., email: ..., displayName: ..., });
 
 // You can also pass in a `DataConnect` instance to the action shortcut function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -603,7 +601,6 @@ import { connectorConfig, createUserRef, CreateUserVariables } from '@firebasege
 
 // The `CreateUser` mutation requires an argument of type `CreateUserVariables`:
 const createUserVars: CreateUserVariables = {
-  id: ..., 
   username: ..., 
   email: ..., 
   displayName: ..., // optional
@@ -612,7 +609,7 @@ const createUserVars: CreateUserVariables = {
 // Call the `createUserRef()` function to get a reference to the mutation.
 const ref = createUserRef(createUserVars);
 // Variables can be defined inline as well.
-const ref = createUserRef({ id: ..., username: ..., email: ..., displayName: ..., });
+const ref = createUserRef({ username: ..., email: ..., displayName: ..., });
 
 // You can also pass in a `DataConnect` instance to the `MutationRef` function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -665,7 +662,6 @@ The `UpdateUserProfile` mutation requires an argument of type `UpdateUserProfile
 
 ```typescript
 export interface UpdateUserProfileVariables {
-  id: string;
   username: string;
   email: string;
   displayName?: string | null;
@@ -691,7 +687,6 @@ import { connectorConfig, updateUserProfile, UpdateUserProfileVariables } from '
 
 // The `UpdateUserProfile` mutation requires an argument of type `UpdateUserProfileVariables`:
 const updateUserProfileVars: UpdateUserProfileVariables = {
-  id: ..., 
   username: ..., 
   email: ..., 
   displayName: ..., // optional
@@ -704,7 +699,7 @@ const updateUserProfileVars: UpdateUserProfileVariables = {
 // You can use the `await` keyword to wait for the promise to resolve.
 const { data } = await updateUserProfile(updateUserProfileVars);
 // Variables can be defined inline as well.
-const { data } = await updateUserProfile({ id: ..., username: ..., email: ..., displayName: ..., bio: ..., location: ..., profilePictureUrl: ..., });
+const { data } = await updateUserProfile({ username: ..., email: ..., displayName: ..., bio: ..., location: ..., profilePictureUrl: ..., });
 
 // You can also pass in a `DataConnect` instance to the action shortcut function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -727,7 +722,6 @@ import { connectorConfig, updateUserProfileRef, UpdateUserProfileVariables } fro
 
 // The `UpdateUserProfile` mutation requires an argument of type `UpdateUserProfileVariables`:
 const updateUserProfileVars: UpdateUserProfileVariables = {
-  id: ..., 
   username: ..., 
   email: ..., 
   displayName: ..., // optional
@@ -739,7 +733,7 @@ const updateUserProfileVars: UpdateUserProfileVariables = {
 // Call the `updateUserProfileRef()` function to get a reference to the mutation.
 const ref = updateUserProfileRef(updateUserProfileVars);
 // Variables can be defined inline as well.
-const ref = updateUserProfileRef({ id: ..., username: ..., email: ..., displayName: ..., bio: ..., location: ..., profilePictureUrl: ..., });
+const ref = updateUserProfileRef({ username: ..., email: ..., displayName: ..., bio: ..., location: ..., profilePictureUrl: ..., });
 
 // You can also pass in a `DataConnect` instance to the `MutationRef` function.
 const dataConnect = getDataConnect(connectorConfig);

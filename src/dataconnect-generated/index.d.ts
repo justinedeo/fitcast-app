@@ -1,4 +1,4 @@
-import { ConnectorConfig, DataConnect, QueryRef, QueryPromise, MutationRef, MutationPromise } from 'firebase/data-connect';
+import { ConnectorConfig, DataConnect, QueryRef, QueryPromise, ExecuteQueryOptions, MutationRef, MutationPromise } from 'firebase/data-connect';
 
 export const connectorConfig: ConnectorConfig;
 
@@ -36,7 +36,6 @@ export interface CreateUserData {
 }
 
 export interface CreateUserVariables {
-  id: string;
   username: string;
   email: string;
   displayName?: string | null;
@@ -127,7 +126,6 @@ export interface UpdateUserProfileData {
 }
 
 export interface UpdateUserProfileVariables {
-  id: string;
   username: string;
   email: string;
   displayName?: string | null;
@@ -140,54 +138,6 @@ export interface User_Key {
   id: string;
   __typename?: 'User_Key';
 }
-
-interface ListPostsRef {
-  /* Allow users to create refs without passing in DataConnect */
-  (): QueryRef<ListPostsData, undefined>;
-  /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect): QueryRef<ListPostsData, undefined>;
-  operationName: string;
-}
-export const listPostsRef: ListPostsRef;
-
-export function listPosts(): QueryPromise<ListPostsData, undefined>;
-export function listPosts(dc: DataConnect): QueryPromise<ListPostsData, undefined>;
-
-interface GetOutfitsRef {
-  /* Allow users to create refs without passing in DataConnect */
-  (vars: GetOutfitsVariables): QueryRef<GetOutfitsData, GetOutfitsVariables>;
-  /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect, vars: GetOutfitsVariables): QueryRef<GetOutfitsData, GetOutfitsVariables>;
-  operationName: string;
-}
-export const getOutfitsRef: GetOutfitsRef;
-
-export function getOutfits(vars: GetOutfitsVariables): QueryPromise<GetOutfitsData, GetOutfitsVariables>;
-export function getOutfits(dc: DataConnect, vars: GetOutfitsVariables): QueryPromise<GetOutfitsData, GetOutfitsVariables>;
-
-interface ListAllUsersRef {
-  /* Allow users to create refs without passing in DataConnect */
-  (): QueryRef<ListAllUsersData, undefined>;
-  /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect): QueryRef<ListAllUsersData, undefined>;
-  operationName: string;
-}
-export const listAllUsersRef: ListAllUsersRef;
-
-export function listAllUsers(): QueryPromise<ListAllUsersData, undefined>;
-export function listAllUsers(dc: DataConnect): QueryPromise<ListAllUsersData, undefined>;
-
-interface GetUserProfileRef {
-  /* Allow users to create refs without passing in DataConnect */
-  (vars: GetUserProfileVariables): QueryRef<GetUserProfileData, GetUserProfileVariables>;
-  /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect, vars: GetUserProfileVariables): QueryRef<GetUserProfileData, GetUserProfileVariables>;
-  operationName: string;
-}
-export const getUserProfileRef: GetUserProfileRef;
-
-export function getUserProfile(vars: GetUserProfileVariables): QueryPromise<GetUserProfileData, GetUserProfileVariables>;
-export function getUserProfile(dc: DataConnect, vars: GetUserProfileVariables): QueryPromise<GetUserProfileData, GetUserProfileVariables>;
 
 interface CreateUserRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -224,4 +174,52 @@ export const createPostRef: CreatePostRef;
 
 export function createPost(vars: CreatePostVariables): MutationPromise<CreatePostData, CreatePostVariables>;
 export function createPost(dc: DataConnect, vars: CreatePostVariables): MutationPromise<CreatePostData, CreatePostVariables>;
+
+interface ListPostsRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListPostsData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<ListPostsData, undefined>;
+  operationName: string;
+}
+export const listPostsRef: ListPostsRef;
+
+export function listPosts(options?: ExecuteQueryOptions): QueryPromise<ListPostsData, undefined>;
+export function listPosts(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListPostsData, undefined>;
+
+interface GetOutfitsRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: GetOutfitsVariables): QueryRef<GetOutfitsData, GetOutfitsVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: GetOutfitsVariables): QueryRef<GetOutfitsData, GetOutfitsVariables>;
+  operationName: string;
+}
+export const getOutfitsRef: GetOutfitsRef;
+
+export function getOutfits(vars: GetOutfitsVariables, options?: ExecuteQueryOptions): QueryPromise<GetOutfitsData, GetOutfitsVariables>;
+export function getOutfits(dc: DataConnect, vars: GetOutfitsVariables, options?: ExecuteQueryOptions): QueryPromise<GetOutfitsData, GetOutfitsVariables>;
+
+interface ListAllUsersRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListAllUsersData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<ListAllUsersData, undefined>;
+  operationName: string;
+}
+export const listAllUsersRef: ListAllUsersRef;
+
+export function listAllUsers(options?: ExecuteQueryOptions): QueryPromise<ListAllUsersData, undefined>;
+export function listAllUsers(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListAllUsersData, undefined>;
+
+interface GetUserProfileRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: GetUserProfileVariables): QueryRef<GetUserProfileData, GetUserProfileVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: GetUserProfileVariables): QueryRef<GetUserProfileData, GetUserProfileVariables>;
+  operationName: string;
+}
+export const getUserProfileRef: GetUserProfileRef;
+
+export function getUserProfile(vars: GetUserProfileVariables, options?: ExecuteQueryOptions): QueryPromise<GetUserProfileData, GetUserProfileVariables>;
+export function getUserProfile(dc: DataConnect, vars: GetUserProfileVariables, options?: ExecuteQueryOptions): QueryPromise<GetUserProfileData, GetUserProfileVariables>;
 

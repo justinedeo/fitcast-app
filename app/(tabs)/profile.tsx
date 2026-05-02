@@ -1,9 +1,10 @@
 import { router } from "expo-router";
+import { useFocusEffect } from "expo-router";
+import { useCallback } from "react";
 import {
     collection,
     deleteDoc,
     doc,
-    getDoc,
     getDocs,
     query,
     updateDoc,
@@ -23,7 +24,8 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-import { auth, db } from "../../services/firebaseConfig";
+import { auth, db, dc } from "../../services/firebaseConfig";
+import { getUserProfile, updateUserProfile } from "../../src/dataconnect-generated";
 
 const ProfilePage = () => {
     const [loading, setLoading] = useState(true);
@@ -38,11 +40,13 @@ const ProfilePage = () => {
     const [friends, setFriends] = useState<Array<any>>([]);
     const [friendLoading, setFriendLoading] = useState(false);
 
-    useEffect(() => {
-        fetchProfile();
-        loadFriendData();
-    }, []);
-
+    // Replace your existing useEffect with this:
+    useFocusEffect(
+        useCallback(() => {
+            fetchProfile();
+            loadFriendData();
+        }, [])
+    );
     const loadFriendData = async () => {
         const user = auth.currentUser;
         if (!user) return;
@@ -100,9 +104,10 @@ const ProfilePage = () => {
 
             await Promise.all(
                 userIdsToLoad.map(async (uid) => {
-                    const userDoc = await getDoc(doc(db, "users", uid));
-                    if (userDoc.exists()) {
-                        userById[uid] = userDoc.data();
+                    // Use Data Connect instead:
+                    const { data } = await getUserProfile(dc, { id: uid });
+                    if (data?.user) {
+                        userById[uid] = data.user;
                     }
                 })
             );
@@ -146,9 +151,10 @@ const ProfilePage = () => {
         try {
             const user = auth.currentUser;
             if (user) {
-                const userDoc = await getDoc(doc(db, "users", user.uid));
-                if (userDoc.exists()) {
-                    const userData = userDoc.data();
+                const { data } = await getUserProfile(dc, { id: user.uid });
+                if (data && data.user) {
+                    const userData = data.user;
+
                     setProfile(userData);
                     setDisplayName(userData.displayName || "");
                     setBio(userData.bio || "");
@@ -156,7 +162,7 @@ const ProfilePage = () => {
                 }
             }
         } catch (err) {
-            console.error("Error fetching profile:", err);
+            console.error("Error fetching profile from SQL:", err);
             Alert.alert("Error", "Could not load profile data.");
         } finally {
             setLoading(false);
@@ -170,10 +176,14 @@ const ProfilePage = () => {
 
             setLoading(true);
 
-            await updateDoc(doc(db, "users", user.uid), {
-                displayName,
-                bio,
-                location,
+            await updateUserProfile(dc, {
+                id: user.uid,
+                username: profile?.username || user.email?.split("@")[0] || "user",
+                email: user.email || "",
+                displayName: displayName || null,
+                bio: bio || null,
+                location: location || null,
+                // Add profilePictureUrl if you have a state for it
             });
 
             setProfile((prev: any) => ({

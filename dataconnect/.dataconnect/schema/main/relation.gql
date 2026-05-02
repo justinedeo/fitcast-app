@@ -63,7 +63,7 @@ extend type Comment {
   """
   A generated field that is used for caching results in SDKs.
   """
-  _id: ID! @fdc_generated(from: "Comment.id", purpose: GLOBAL_ID)
+  _id: ID! @fdc_generated(from: "Comment.id", purpose: ENTITY_ID)
 }
 extend type Like {
   """
@@ -112,7 +112,7 @@ extend type Like {
   """
   A generated field that is used for caching results in SDKs.
   """
-  _id: ID! @fdc_generated(from: "Like.userId,postId", purpose: GLOBAL_ID)
+  _id: ID! @fdc_generated(from: "Like.userId,postId", purpose: ENTITY_ID)
 }
 extend type OutfitRecommendation {
   """
@@ -265,7 +265,7 @@ extend type OutfitRecommendation {
   """
   A generated field that is used for caching results in SDKs.
   """
-  _id: ID! @fdc_generated(from: "OutfitRecommendation.id", purpose: GLOBAL_ID)
+  _id: ID! @fdc_generated(from: "OutfitRecommendation.id", purpose: ENTITY_ID)
 }
 extend type Post {
   """
@@ -379,6 +379,15 @@ extend type Post {
   """
   _count: Int! @fdc_generated(from: "Post.", purpose: QUERY_COUNT)
   """
+  ✨ Count the number of rows in the `Post` table where the `bottom` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  bottom_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Post.bottom", purpose: QUERY_COUNT)
+  """
   ✨ Count the number of rows in the `Post` table where the `content` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
   """
   content_count(
@@ -424,6 +433,24 @@ extend type Post {
     distinct: Boolean = false
   ): Int! @fdc_generated(from: "Post.locationTag", purpose: QUERY_COUNT)
   """
+  ✨ Count the number of rows in the `Post` table where the `outerwear` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  outerwear_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Post.outerwear", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Post` table where the `top` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  top_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Post.top", purpose: QUERY_COUNT)
+  """
   ✨ Count the number of rows in the `Post` table where the `userId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
   """
   userId_count(
@@ -433,17 +460,43 @@ extend type Post {
     distinct: Boolean = false
   ): Int! @fdc_generated(from: "Post.userId", purpose: QUERY_COUNT)
   """
+  ✨ Count the number of rows in the `Post` table where the `wornAt` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  wornAt_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Post.wornAt", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Post` table where the `zipCode` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  zipCode_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Post.zipCode", purpose: QUERY_COUNT)
+  """
   ✨ Minimum of the `createdAt` field in the `Post` table.
   """
   createdAt_min: Timestamp @fdc_generated(from: "Post.createdAt", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `wornAt` field in the `Post` table.
+  """
+  wornAt_min: Timestamp @fdc_generated(from: "Post.wornAt", purpose: QUERY_MIN)
   """
   ✨ Maximum of the `createdAt` field in the `Post` table.
   """
   createdAt_max: Timestamp @fdc_generated(from: "Post.createdAt", purpose: QUERY_MAX)
   """
+  ✨ Maximum of the `wornAt` field in the `Post` table.
+  """
+  wornAt_max: Timestamp @fdc_generated(from: "Post.wornAt", purpose: QUERY_MAX)
+  """
   A generated field that is used for caching results in SDKs.
   """
-  _id: ID! @fdc_generated(from: "Post.id", purpose: GLOBAL_ID)
+  _id: ID! @fdc_generated(from: "Post.id", purpose: ENTITY_ID)
 }
 extend type SavedOutfit {
   """
@@ -501,7 +554,7 @@ extend type SavedOutfit {
   """
   A generated field that is used for caching results in SDKs.
   """
-  _id: ID! @fdc_generated(from: "SavedOutfit.userId,outfitRecommendationId", purpose: GLOBAL_ID)
+  _id: ID! @fdc_generated(from: "SavedOutfit.userId,outfitRecommendationId", purpose: ENTITY_ID)
 }
 extend type User {
   """
@@ -805,6 +858,15 @@ extend type User {
     distinct: Boolean = false
   ): Int! @fdc_generated(from: "User.location", purpose: QUERY_COUNT)
   """
+  ✨ Count the number of rows in the `User` table where the `phoneNumber` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  phoneNumber_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "User.phoneNumber", purpose: QUERY_COUNT)
+  """
   ✨ Count the number of rows in the `User` table where the `profilePictureUrl` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
   """
   profilePictureUrl_count(
@@ -833,5 +895,5 @@ extend type User {
   """
   A generated field that is used for caching results in SDKs.
   """
-  _id: ID! @fdc_generated(from: "User.id", purpose: GLOBAL_ID)
+  _id: ID! @fdc_generated(from: "User.id", purpose: ENTITY_ID)
 }
