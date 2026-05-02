@@ -138,7 +138,10 @@ I0226 16:46:53.624639   41416 load.go:74] Finished reloading
 [debug] [2026-02-26T22:46:53.812Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects 200
 [debug] [2026-02-26T22:46:53.812Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects [omitted]
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 415b34c752a24734c8e54992e3bcf18c1c1d3695
 [debug] [2026-02-27T00:46:56.705Z] [Firebase Plugin] Activating Firebase extension.
 [info] [Firebase Plugin] Checked firebase-tools, is up to date!
 [debug] [2026-02-27T00:47:04.773Z] [Firebase Plugin] requireAuthWrapper
@@ -288,6 +291,7 @@ I0302 12:19:17.214826   21944 dev.go:104] Listening on address (HTTP + gRPC): 12
 [debug] [2026-03-07T05:27:42.052Z] >>> [apiv2][query] GET http://127.0.0.1:4400/emulators [none]
 [debug] [2026-03-07T05:27:42.174Z] <<< [apiv2][status] GET http://127.0.0.1:4400/emulators 200
 [debug] [2026-03-07T05:27:42.175Z] <<< [apiv2][body] GET http://127.0.0.1:4400/emulators {"hub":{"listen":[{"address":"127.0.0.1","family":"IPv4","port":4400},{"address":"::1","family":"IPv6","port":4400}],"name":"hub","host":"127.0.0.1","port":4400},"ui":{"listen":[{"address":"127.0.0.1","family":"IPv4","port":4000},{"address":"::1","family":"IPv6","port":4000}],"name":"ui","host":"127.0.0.1","port":4000},"logging":{"listen":[{"address":"127.0.0.1","family":"IPv4","port":4500}],"name":"logging","host":"127.0.0.1","port":4500},"auth":{"listen":[{"address":"127.0.0.1","family":"IPv4","port":9099}],"name":"auth","host":"127.0.0.1","port":9099},"dataconnect":{"listen":[{"address":"127.0.0.1","family":"IPv4","port":9399},{"address":"::1","family":"IPv6","port":9399}],"name":"dataconnect","host":"127.0.0.1","port":9399,"pid":27436,"timeout":10000}}
+<<<<<<< HEAD
 [info] [Firebase Plugin] Stopping Data Connect toolkit
 [warn] !  Data Connect Emulator has exited upon receiving signal: SIGINT 
 [debug] [2026-03-14T20:07:06.115Z] [Firebase Plugin] Activating Firebase extension.
@@ -421,3 +425,5 @@ Generated sources: index.d.ts [8025B] esm\index.esm.js [3561B] README.md [40931B
 [debug] [2026-03-18T05:10:23.006Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects 200
 [debug] [2026-03-18T05:10:23.006Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects [omitted]
 >>>>>>> origin/main
+=======
+>>>>>>> 415b34c752a24734c8e54992e3bcf18c1c1d3695
