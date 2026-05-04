@@ -23,7 +23,7 @@ FitCast is a mobile application that combines real-time weather data, social out
 git clone -b final-tests https://github.com/justinedeo/fitcast-app.git  
 cd fitcast-app  
 
-## DO NOT CLONE MAIN
+### DO NOT CLONE MAIN
 
 ---
 
