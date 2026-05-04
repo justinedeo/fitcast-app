@@ -48,6 +48,7 @@ Drag `.env` into the root of the project:
 .env  
 
 The `.env` file should contain:
+
 EXPO_PUBLIC_WEATHER_API_KEY=your_openweather_api_key  
 EXPO_PUBLIC_GEMINI_API_KEY=your_gemini_api_key
 
