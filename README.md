@@ -4,10 +4,10 @@
 CSCI 440-Capstone Final
 
 ## Team
-Justine  
-Gabe  
-Caitlyn  
-Ian  
+Justine De Ocampo
+Gabe Pipes
+Caitlyn Beam
+Ian Calhoun
 
 ---
 
@@ -44,8 +44,7 @@ npx expo install expo-location
 Drag `firebaseConfig.ts` into:
 services/firebaseConfig.ts  
 
-Drag `.env` into the root of the project:
-.env  
+Drag `.env` into the root of the project
 
 The `.env` file should contain:
 
@@ -68,4 +67,4 @@ Firebase configuration is not included in the repository for security reasons, p
 Data Connect generated files are already included, no additional setup is required  
 Expo Go has limited support for notifications 
 
-Thanks for trying it out and thanks for a great semester Professor Alsmirat!
+Thanks for trying it out and thanks for a great semester, Professor Alsmirat!
