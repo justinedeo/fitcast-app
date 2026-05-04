@@ -24,8 +24,7 @@ import { getUserProfile, updateUserProfile } from "../../src/dataconnect-generat
 const DEFAULT_AVATAR = require("../../assets/images/placeholderImg.png");
 
 export default function EditProfile() {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const isDark = useColorScheme() === "dark";
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -40,9 +39,9 @@ export default function EditProfile() {
     background: isDark ? "#000" : "#F7F8EC",
     text: isDark ? "#FFFFFF" : "#111111",
     input: isDark ? "#1E1E1E" : "#F1F5F9",
-    border: isDark ? "#333333" : "#E5E7EB",
+    border: isDark ? "#333" : "#E5E7EB",
     button: "#134E96",
-    subtext: isDark ? "#C7C7C7" : "#666666",
+    subtext: isDark ? "#C7C7C7" : "#666",
   };
 
   useEffect(() => {
@@ -57,19 +56,13 @@ export default function EditProfile() {
       const { data } = await getUserProfile(dc, { id: user.uid });
 
       if (data?.user) {
-        const mergedProfile = {
-          ...data.user,
-          email: user.email || "",
-        };
-
-        setProfile(mergedProfile);
+        setProfile(data.user);
         setDisplayName(data.user.displayName || "");
         setBio(data.user.bio || "");
         setLocation(data.user.location || "");
         setImageUri(data.user.profilePictureUrl || null);
       }
-    } catch (error) {
-      console.error("Error fetching profile:", error);
+    } catch {
       Alert.alert("Error", "Could not load profile.");
     } finally {
       setLoading(false);
@@ -78,9 +71,8 @@ export default function EditProfile() {
 
   const pickImage = async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
     if (!permission.granted) {
-      Alert.alert("Permission required", "Allow photo access to continue.");
+      Alert.alert("Permission required");
       return;
     }
 
@@ -90,27 +82,21 @@ export default function EditProfile() {
       quality: 0.8,
     });
 
-    if (!result.canceled) {
-      setImageUri(result.assets[0].uri);
-    }
+    if (!result.canceled) setImageUri(result.assets[0].uri);
   };
 
   const uploadImage = async (uri: string) => {
     const blob: Blob = await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       xhr.onload = () => resolve(xhr.response);
-      xhr.onerror = () => reject(new TypeError("Upload failed"));
+      xhr.onerror = () => reject();
       xhr.responseType = "blob";
       xhr.open("GET", uri, true);
       xhr.send(null);
     });
 
-    const path = `profile/${auth.currentUser?.uid}.jpg`;
-    const storageRef = ref(storage, path);
-
+    const storageRef = ref(storage, `profile/${auth.currentUser?.uid}.jpg`);
     await uploadBytes(storageRef, blob);
-    (blob as any).close?.();
-
     return await getDownloadURL(storageRef);
   };
 
@@ -122,30 +108,27 @@ export default function EditProfile() {
       setSaving(true);
 
       let photoUrl = profile?.profilePictureUrl || null;
-
       if (imageUri && imageUri !== profile?.profilePictureUrl) {
         photoUrl = await uploadImage(imageUri);
       }
 
-      const updatedProfile = {
+      const updated = {
         id: user.uid,
-        username: profile?.username || user.email?.split("@")[0] || "user",
+        username: profile?.username || "user",
         email: user.email || "",
-        displayName: displayName || null,
-        bio: bio || null,
-        location: location || null,
+        displayName,
+        bio,
+        location,
         profilePictureUrl: photoUrl,
       };
 
-      await updateUserProfile(dc, updatedProfile);
+      await updateUserProfile(dc, updated);
+      setCachedUserProfile(updated);
 
-      setCachedUserProfile(updatedProfile);
-
-      Alert.alert("Saved!", "Your profile has been updated.");
+      Alert.alert("Saved!");
       router.back();
-    } catch (error) {
-      console.error("Error updating profile:", error);
-      Alert.alert("Error", "Failed to update profile.");
+    } catch {
+      Alert.alert("Error updating profile");
     } finally {
       setSaving(false);
     }
@@ -153,16 +136,17 @@ export default function EditProfile() {
 
   if (loading) {
     return (
-      <SafeAreaView style={[styles.center, { backgroundColor: theme.background }]} edges={["top"]}>
+      <SafeAreaView style={[styles.center, { backgroundColor: theme.background }]}>
         <ActivityIndicator size="large" color="#59C1BD" />
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }} edges={["top"]}>
-      <ScrollView style={{ backgroundColor: theme.background }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
+      <ScrollView>
         <View style={styles.container}>
+          
           <TouchableOpacity onPress={pickImage} style={styles.imageWrapper}>
             <Image
               source={imageUri ? { uri: imageUri } : DEFAULT_AVATAR}
@@ -177,71 +161,37 @@ export default function EditProfile() {
             Tap your photo to change it
           </Text>
 
-          <View style={styles.inputGroup}>
-            <Text style={[styles.label, { color: theme.text }]}>Display Name</Text>
-            <TextInput
-              value={displayName}
-              onChangeText={setDisplayName}
-              placeholder="Enter display name"
-              placeholderTextColor={theme.subtext}
-              style={[
-                styles.input,
-                {
-                  backgroundColor: theme.input,
-                  color: theme.text,
-                  borderColor: theme.border,
-                },
-              ]}
-            />
-          </View>
+          <Text style={[styles.label, { color: theme.text }]}>Display Name</Text>
+          <TextInput
+            style={[styles.input, { backgroundColor: theme.input, color: theme.text }]}
+            value={displayName}
+            onChangeText={setDisplayName}
+          />
 
-          <View style={styles.inputGroup}>
-            <Text style={[styles.label, { color: theme.text }]}>Bio</Text>
-            <TextInput
-              value={bio}
-              onChangeText={setBio}
-              placeholder="Tell us about yourself"
-              placeholderTextColor={theme.subtext}
-              multiline
-              style={[
-                styles.input,
-                styles.textArea,
-                {
-                  backgroundColor: theme.input,
-                  color: theme.text,
-                  borderColor: theme.border,
-                },
-              ]}
-            />
-          </View>
+          <Text style={[styles.label, { color: theme.text }]}>Bio</Text>
+          <TextInput
+            style={[styles.input, styles.textArea, { backgroundColor: theme.input, color: theme.text }]}
+            value={bio}
+            onChangeText={setBio}
+            multiline
+          />
 
-          <View style={styles.inputGroup}>
-            <Text style={[styles.label, { color: theme.text }]}>Location</Text>
-            <TextInput
-              value={location}
-              onChangeText={setLocation}
-              placeholder="e.g. College Station, TX"
-              placeholderTextColor={theme.subtext}
-              style={[
-                styles.input,
-                {
-                  backgroundColor: theme.input,
-                  color: theme.text,
-                  borderColor: theme.border,
-                },
-              ]}
-            />
-          </View>
+          <Text style={[styles.label, { color: theme.text }]}>Location</Text>
+          <TextInput
+            style={[styles.input, { backgroundColor: theme.input, color: theme.text }]}
+            value={location}
+            onChangeText={setLocation}
+          />
 
           <TouchableOpacity
             style={[styles.button, { backgroundColor: theme.button }]}
             onPress={handleSave}
-            disabled={saving}
           >
             <Text style={styles.buttonText}>
               {saving ? "Saving..." : "Save Changes"}
             </Text>
           </TouchableOpacity>
+
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -250,8 +200,9 @@ export default function EditProfile() {
 
 const styles = StyleSheet.create({
   center: { flex: 1, justifyContent: "center", alignItems: "center" },
-  container: { padding: 20, paddingTop: 12, paddingBottom: 30 },
-  imageWrapper: { alignSelf: "center", marginTop: 8, marginBottom: 12 },
+  container: { padding: 20 },
+
+  imageWrapper: { alignSelf: "center", marginBottom: 10 },
   avatar: { width: 110, height: 110, borderRadius: 55 },
   editIcon: {
     position: "absolute",
@@ -261,11 +212,41 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 6,
   },
-  helperText: { textAlign: "center", marginBottom: 24, fontSize: 14 },
-  inputGroup: { marginBottom: 16 },
-  label: { fontWeight: "600", marginBottom: 6, fontSize: 15 },
-  input: { borderRadius: 10, padding: 12, borderWidth: 1, fontSize: 16 },
-  textArea: { minHeight: 90, textAlignVertical: "top" },
-  button: { marginTop: 20, padding: 14, borderRadius: 12, alignItems: "center" },
-  buttonText: { color: "#fff", fontWeight: "700", fontSize: 16 },
+
+  helperText: {
+    textAlign: "center",
+    marginBottom: 20,
+    fontSize: 14,
+    fontFamily: "Epilogue-Regular",
+  },
+
+  label: {
+    marginTop: 12,
+    marginBottom: 6,
+    fontSize: 15,
+    fontFamily: "Epilogue-Bold",
+  },
+
+  input: {
+    borderRadius: 10,
+    padding: 12,
+    borderWidth: 1,
+    fontSize: 16,
+    fontFamily: "Epilogue-Regular",
+  },
+
+  textArea: { minHeight: 90 },
+
+  button: {
+    marginTop: 20,
+    padding: 14,
+    borderRadius: 12,
+    alignItems: "center",
+  },
+
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontFamily: "Epilogue-Bold",
+  },
 });

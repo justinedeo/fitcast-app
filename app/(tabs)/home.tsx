@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
@@ -190,6 +191,12 @@ Outerwear:
 Recommended materials: ...
 
 What to avoid: ...
+
+-Keep each recommendation in its designated section. You may suggest items to avoid even if there's no past feedback
+-Make sure those suggestions are reasonable based on the current weather 
+-Act as a helpful assistant—your goal is to give clear, practical outfit advice
+-When relevant, incorporate past outfit feedback and explicitly mention when you're using it
+-You can also combine past feedback with your own recommendations to improve the suggestions
 `;
 
       const response = await fetch(
@@ -208,6 +215,8 @@ What to avoid: ...
           }),
         }
       );
+
+
 
       const data = await response.json();
 
@@ -230,6 +239,7 @@ What to avoid: ...
       setAiLoading(false);
     }
   };
+
 
   const fetchWeather = async () => {
     const API_KEY = process.env.EXPO_PUBLIC_WEATHER_API_KEY;
@@ -287,7 +297,6 @@ What to avoid: ...
         lon = geoData[0].lon;
         resolvedName = geoData[0].name;
       }
-
       const currentRes = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=imperial`
       );
@@ -333,12 +342,14 @@ What to avoid: ...
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 30 }}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Welcome to FitCast</Text>
-        <Text style={styles.headerSubtitle}>
-          Dress sensibly for every kind of weather!
-        </Text>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.contentContainer}
+    >
+      <View style={styles.logoContainer}>
+        <View style={styles.sunGlow}>
+          <Ionicons name="sunny" size={80} color="#FFF4B8" />
+        </View>
       </View>
 
       <View style={styles.searchCard}>
@@ -347,6 +358,7 @@ What to avoid: ...
         <TextInput
           style={styles.input}
           placeholder="City or ZIP code"
+          placeholderTextColor="#8689A0"
           value={locationInput}
           onChangeText={setLocationInput}
           autoCapitalize="words"
@@ -365,7 +377,7 @@ What to avoid: ...
 
       {loading && (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#59C1BD" />
+          <ActivityIndicator size="large" color="#FFF4B8" />
         </View>
       )}
 
@@ -420,100 +432,116 @@ What to avoid: ...
   );
 }
 
+const cardShadow = {
+  shadowColor: "#000",
+  shadowOffset: { width: 0, height: 4 },
+  shadowOpacity: 0.12,
+  shadowRadius: 8,
+  elevation: 4,
+};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#59C1BD",
+  },
+  contentContainer: {
+    paddingBottom: 30,
+    paddingTop: 45,
+  },
+  logoContainer: {
+    alignItems: "center",
+    marginBottom: 25,
+  },
+  sunGlow: {
+    shadowColor: "#f5f6e3",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 1,
+    shadowRadius: 18,
+    elevation: 10,
   },
   loadingContainer: {
     marginTop: 20,
     justifyContent: "center",
     alignItems: "center",
   },
-  header: {
-    backgroundColor: "#59C1BD",
-    padding: 30,
-    alignItems: "center",
-  },
-  headerTitle: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: "#fff",
-    marginBottom: 10,
-  },
-  headerSubtitle: {
-    fontSize: 16,
-    color: "#fff",
-  },
   searchCard: {
-    backgroundColor: "#EEF1DA",
-    margin: 20,
+    backgroundColor: "#f7f8ec",
+    marginHorizontal: 20,
+    marginBottom: 20,
     padding: 20,
     borderRadius: 20,
+    ...cardShadow,
   },
   searchLabel: {
     fontSize: 18,
-    fontWeight: "bold",
     color: "#0D4C92",
     marginBottom: 12,
+    fontFamily: "Epilogue-Bold",
   },
   input: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    paddingHorizontal: 15,
+    backgroundColor: "transparent",
+    borderBottomWidth: 1,
+    borderBottomColor: "#0D4C92",
+    paddingHorizontal: 5,
     paddingVertical: 12,
     fontSize: 16,
-    marginBottom: 15,
-    borderWidth: 1,
-    borderColor: "#D9E2EC",
+    marginBottom: 18,
+    color: "#8689A0",
+    fontFamily: "Epilogue-Regular",
   },
   button: {
-    backgroundColor: "#59C1BD",
+    backgroundColor: "#0D4C92",
     paddingVertical: 14,
-    borderRadius: 12,
+    borderRadius: 25,
     alignItems: "center",
+    width: "65%",
+    alignSelf: "center",
   },
   buttonText: {
     color: "#fff",
     fontSize: 16,
-    fontWeight: "bold",
+    fontFamily: "Epilogue-Bold",
   },
   weatherCard: {
-    backgroundColor: "#EEF1DA",
+    backgroundColor: "#f7f8ec",
     marginHorizontal: 20,
     marginBottom: 20,
     padding: 20,
     borderRadius: 20,
     alignItems: "center",
+    ...cardShadow,
   },
   cityName: {
     fontSize: 25,
-    fontWeight: "bold",
     color: "#0D4C92",
+    fontFamily: "Epilogue-Bold",
   },
   temperature: {
     fontSize: 50,
-    fontWeight: "bold",
     color: "#0D4C92",
     marginVertical: 10,
+    fontFamily: "Epilogue-Bold",
   },
   description: {
     fontSize: 15,
     color: "#5c6398",
     textTransform: "capitalize",
+    fontFamily: "Epilogue-Regular",
   },
   forecastContainer: {
     marginHorizontal: 20,
     marginBottom: 20,
     padding: 20,
-    backgroundColor: "#F7F9FC",
+    backgroundColor: "#f7f8ec",
     borderRadius: 20,
+    ...cardShadow,
   },
   forecastTitle: {
     fontSize: 20,
-    fontWeight: "bold",
     color: "#0D4C92",
     marginBottom: 15,
+    fontFamily: "Epilogue-Bold",
   },
   forecastRow: {
     flexDirection: "row",
@@ -521,13 +549,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "#E1E8ED",
+    borderBottomColor: "#D9E2EC",
   },
   forecastDay: {
     fontSize: 16,
-    fontWeight: "bold",
     color: "#0D4C92",
     width: 50,
+    fontFamily: "Epilogue-Bold",
   },
   forecastDesc: {
     flex: 1,
@@ -536,30 +564,33 @@ const styles = StyleSheet.create({
     textTransform: "capitalize",
     textAlign: "center",
     marginHorizontal: 8,
+    fontFamily: "Epilogue-Regular",
   },
   forecastTemp: {
     fontSize: 16,
-    fontWeight: "bold",
     color: "#0D4C92",
     width: 50,
     textAlign: "right",
+    fontFamily: "Epilogue-Bold",
   },
   aiCard: {
-    backgroundColor: "#EEF1DA",
+    backgroundColor: "#f7f8ec",
     marginHorizontal: 20,
     marginBottom: 30,
     padding: 20,
     borderRadius: 20,
+    ...cardShadow,
   },
   aiTitle: {
     fontSize: 20,
-    fontWeight: "bold",
     color: "#0D4C92",
     marginBottom: 12,
+    fontFamily: "Epilogue-Bold",
   },
   aiText: {
     fontSize: 15,
     color: "#4A5568",
     lineHeight: 22,
+    fontFamily: "Epilogue-Regular",
   },
 });

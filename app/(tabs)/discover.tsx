@@ -147,13 +147,15 @@ export default function DiscoverPage() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
+  container: { 
+    flex: 1 
+  },
   title: {
     fontSize: 32,
-    fontWeight: "800",
     paddingHorizontal: 18,
     paddingTop: 8,
     marginBottom: 12,
+    fontFamily: "Epilogue-Bold",
   },
   listContent: {
     paddingHorizontal: 18,
@@ -166,11 +168,13 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     fontSize: 16,
     marginBottom: 14,
+    fontFamily: "Epilogue-Regular",
   },
   emptyText: {
     textAlign: "center",
     fontSize: 16,
     marginTop: 40,
+    fontFamily: "Epilogue-Regular",
   },
   userRow: {
     flexDirection: "row",
@@ -186,10 +190,11 @@ const styles = StyleSheet.create({
   },
   displayName: {
     fontSize: 16,
-    fontWeight: "700",
+    fontFamily: "Epilogue-Bold",
   },
   username: {
     fontSize: 13,
     marginTop: 2,
+    fontFamily: "Epilogue-Regular",
   },
 });

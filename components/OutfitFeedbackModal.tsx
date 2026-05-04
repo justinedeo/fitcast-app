@@ -22,7 +22,7 @@ type Props = {
 const RATINGS = [
   { label: "Too Warm", value: "too_warm", color: "#FF6B6B" },
   { label: "Too Cold", value: "too_cold", color: "#74C0FC" },
-  { label: "Perfect", value: "perfect",  color: "#59C1BD" },
+  { label: "Perfect", value: "perfect", color: "#59C1BD" },
 ];
 
 export default function OutfitFeedbackModal({
@@ -45,15 +45,24 @@ export default function OutfitFeedbackModal({
 
       await createOutfitFeedback(dc, {
         userId: user.uid,
-        postId,
+        postId: postId as any,
         rating,
         temperature: temperature ?? null,
         weatherCondition: weatherCondition ?? null,
       });
 
+      console.log("Saved outfit feedback:", {
+        userId: user.uid,
+        postId,
+        rating,
+        temperature,
+        weatherCondition,
+      });
+
       Alert.alert("Thanks!", "Your feedback helps us make better suggestions.");
       onClose();
     } catch (error: any) {
+      console.error("Feedback save error:", error);
       Alert.alert("Error", error?.message || "Failed to save feedback.");
     } finally {
       setSubmitting(false);
@@ -77,6 +86,15 @@ export default function OutfitFeedbackModal({
             Help FitCast learn your comfort preferences
           </Text>
 
+          <View style={styles.weatherBox}>
+            <Text style={styles.weatherText}>
+              {temperature !== null && temperature !== undefined
+                ? `${Math.round(temperature)}°F`
+                : "Weather unavailable"}
+              {weatherCondition ? ` • ${weatherCondition}` : ""}
+            </Text>
+          </View>
+
           <View style={styles.buttonGroup}>
             {RATINGS.map((r) => (
               <Pressable
@@ -92,16 +110,14 @@ export default function OutfitFeedbackModal({
                 {submitting && selected === r.value ? (
                   <ActivityIndicator color="#fff" />
                 ) : (
-                  <>
-                    <Text
-                      style={[
-                        styles.ratingLabel,
-                        { color: selected === r.value ? "#fff" : r.color },
-                      ]}
-                    >
-                      {r.label}
-                    </Text>
-                  </>
+                  <Text
+                    style={[
+                      styles.ratingLabel,
+                      { color: selected === r.value ? "#fff" : r.color },
+                    ]}
+                  >
+                    {r.label}
+                  </Text>
                 )}
               </Pressable>
             ))}
@@ -149,7 +165,20 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: "#666",
     textAlign: "center",
-    marginBottom: 32,
+    marginBottom: 16,
+  },
+  weatherBox: {
+    backgroundColor: "#EEF1DA",
+    borderRadius: 14,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    marginBottom: 22,
+  },
+  weatherText: {
+    color: "#0D4C92",
+    fontWeight: "700",
+    fontSize: 14,
+    textTransform: "capitalize",
   },
   buttonGroup: {
     width: "100%",
@@ -160,14 +189,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 12,
     paddingVertical: 18,
     borderRadius: 18,
     borderWidth: 2,
     backgroundColor: "#fff",
-  },
-  ratingEmoji: {
-    fontSize: 26,
   },
   ratingLabel: {
     fontSize: 18,

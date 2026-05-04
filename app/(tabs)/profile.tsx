@@ -286,34 +286,87 @@ export default function ProfilePage() {
 
 const styles = StyleSheet.create({
   loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
+
   headerSection: {
     alignItems: "center",
     paddingTop: 32,
     paddingBottom: 24,
     paddingHorizontal: 20,
   },
-  avatar: { width: 95, height: 95, borderRadius: 47.5, marginBottom: 14 },
-  displayName: { fontSize: 30, fontWeight: "600", marginBottom: 4 },
-  subInfo: { fontSize: 14, marginBottom: 18, textAlign: "center" },
+
+  avatar: {
+    width: 95,
+    height: 95,
+    borderRadius: 47.5,
+    marginBottom: 14,
+  },
+
+  displayName: {
+    fontSize: 30,
+    marginBottom: 4,
+    fontFamily: "Epilogue-Bold",
+  },
+
+  subInfo: {
+    fontSize: 14,
+    marginBottom: 18,
+    textAlign: "center",
+    fontFamily: "Epilogue-Regular",
+  },
+
   statsRow: {
     flexDirection: "row",
     justifyContent: "space-around",
     width: "100%",
     marginBottom: 22,
   },
-  statBlock: { alignItems: "center", minWidth: 80 },
-  statNumber: { fontSize: 24, fontWeight: "700" },
-  statLabel: { fontSize: 12, marginTop: 2 },
-  buttonRow: { flexDirection: "row", gap: 12, marginTop: 4 },
+
+  statBlock: {
+    alignItems: "center",
+    minWidth: 80,
+  },
+
+  statNumber: {
+    fontSize: 24,
+    fontFamily: "Epilogue-Bold",
+  },
+
+  statLabel: {
+    fontSize: 12,
+    marginTop: 2,
+    fontFamily: "Epilogue-Regular",
+  },
+
+  buttonRow: {
+    flexDirection: "row",
+    gap: 12,
+    marginTop: 4,
+  },
+
   actionButton: {
     minWidth: 140,
     paddingVertical: 12,
     borderRadius: 12,
     alignItems: "center",
   },
-  actionButtonText: { color: "#FFFFFF", fontSize: 16, fontWeight: "700" },
-  gridItem: { width: "33.3333%", aspectRatio: 1, borderWidth: 0.5 },
-  gridImage: { width: "100%", height: "100%" },
+
+  actionButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontFamily: "Epilogue-Bold",
+  },
+
+  gridItem: {
+    width: "33.3333%",
+    aspectRatio: 1,
+    borderWidth: 0.5,
+  },
+
+  gridImage: {
+    width: "100%",
+    height: "100%",
+  },
+
   deleteBadge: {
     position: "absolute",
     bottom: 4,
@@ -323,11 +376,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     paddingVertical: 3,
   },
+
   deleteBadgeText: {
     color: "#fff",
     fontSize: 10,
-    fontWeight: "700",
+    fontFamily: "Epilogue-Bold",
   },
+
   privateBadge: {
     position: "absolute",
     top: 4,
@@ -336,14 +391,25 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 4,
   },
-  emptyContainer: { paddingVertical: 30, alignItems: "center" },
-  emptyText: { fontSize: 16, color: "#666" },
+
+  emptyContainer: {
+    paddingVertical: 30,
+    alignItems: "center",
+  },
+
+  emptyText: {
+    fontSize: 16,
+    color: "#666",
+    fontFamily: "Epilogue-Regular",
+  },
+
   modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.9)",
     justifyContent: "center",
     alignItems: "center",
   },
+
   fullImage: {
     width: "92%",
     height: "70%",

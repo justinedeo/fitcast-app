@@ -68,7 +68,6 @@ type FeedPost = {
 
 export default function Dashboard() {
   const isDark = useColorScheme() === "dark";
-  //posts currently in feed
   const [posts, setPosts] = useState<FeedPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -76,11 +75,9 @@ export default function Dashboard() {
   const [zipInput, setZipInput] = useState("");
   const [userZip, setUserZip] = useState("");
 
-  // track likes by user
   const [likedPosts, setLikedPosts] = useState<Record<string, boolean>>({});
   const [likeCounts, setLikeCounts] = useState<Record<string, number>>({});
 
-  //comment pet postId
   const [comments, setComments] = useState<Record<string, Comment[]>>({});
   const [commentInputVisible, setCommentInputVisible] = useState<Record<string, boolean>>({});
   const [commentText, setCommentText] = useState<Record<string, string>>({});
@@ -250,7 +247,6 @@ export default function Dashboard() {
             pendingLikeCountsRef.current[postId] !== undefined
               ? pendingLikeCountsRef.current[postId]
               : likes.length;
-
           if (
             pendingLikedPostsRef.current[postId] !== undefined &&
             backendLiked === pendingLikedPostsRef.current[postId]
@@ -288,44 +284,43 @@ export default function Dashboard() {
     },
     []
   );
-
   const fetchPosts = useCallback(async () => {
-  try {
-    const { data } = await listPosts(dc, NO_CACHE);
+    try {
+      const { data } = await listPosts(dc, NO_CACHE);
 
-    const backendPosts = ((data?.posts ?? []) as FeedPost[]).filter(
-      (post) => !(deletedPostIds?.has(post.id))
-    );
-
-    const pendingPosts = Array.from(pendingCreatedPosts.values()).filter(
-      (post: FeedPost) => post.isPublic && !(deletedPostIds?.has(post.id))
-    );
-
-    const mergedPosts = [
-      ...pendingPosts.filter(
-        (pending: FeedPost) =>
-          !backendPosts.some((post) => post.id === pending.id)
-      ),
-      ...backendPosts,
-    ];
-
-    const feedPosts = sortPosts(mergedPosts);
-
-    setPosts(feedPosts);
-
-    if (feedPosts.length > 0) {
-      await loadPostInteractions(
-        feedPosts.map((post) => post.id),
-        true
+      const backendPosts = ((data?.posts ?? []) as FeedPost[]).filter(
+        (post) => !(deletedPostIds?.has(post.id))
       );
+
+      const pendingPosts = Array.from(pendingCreatedPosts.values()).filter(
+        (post: FeedPost) => post.isPublic && !(deletedPostIds?.has(post.id))
+      );
+
+      const mergedPosts = [
+        ...pendingPosts.filter(
+          (pending: FeedPost) =>
+            !backendPosts.some((post) => post.id === pending.id)
+        ),
+        ...backendPosts,
+      ];
+
+      const feedPosts = sortPosts(mergedPosts);
+
+      setPosts(feedPosts);
+
+      if (feedPosts.length > 0) {
+        await loadPostInteractions(
+          feedPosts.map((post) => post.id),
+          true
+        );
+      }
+    } catch (error) {
+      console.error("Error loading posts:", error);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
     }
-  } catch (error) {
-    console.error("Error loading posts:", error);
-  } finally {
-    setLoading(false);
-    setRefreshing(false);
-  }
-}, [sortPosts, loadPostInteractions]);
+  }, [sortPosts, loadPostInteractions]);
 
   useEffect(() => {
     detectZip();
@@ -372,7 +367,6 @@ export default function Dashboard() {
     pendingLikedPostsRef.current[postId] = nextLiked;
     pendingLikeCountsRef.current[postId] = nextCount;
 
-    // update UI before backend updates
     setLikedPosts((prev) => ({ ...prev, [postId]: nextLiked }));
     setLikeCounts((prev) => ({ ...prev, [postId]: nextCount }));
 
@@ -414,7 +408,6 @@ export default function Dashboard() {
       }));
     }
   };
-
   const handleCommentToggle = (postId: string) => {
     const isVisible = commentInputVisible[postId] ?? false;
 
@@ -770,7 +763,6 @@ export default function Dashboard() {
                       ))}
                     </View>
                   )}
-
                   {isCommentOpen && (
                     <View
                       style={[
@@ -826,6 +818,8 @@ export default function Dashboard() {
   );
 }
 
+
+
 const styles = StyleSheet.create({
   container: { flex: 1 },
   contentContainer: {
@@ -840,9 +834,9 @@ const styles = StyleSheet.create({
   },
   screenTitle: {
     fontSize: 28,
-    fontWeight: "700",
     marginBottom: 16,
     paddingHorizontal: 4,
+    fontFamily: "Epilogue-Bold",
   },
   zipFilterCard: {
     borderWidth: 1,
@@ -852,8 +846,8 @@ const styles = StyleSheet.create({
   },
   zipFilterLabel: {
     fontSize: 16,
-    fontWeight: "700",
     marginBottom: 10,
+    fontFamily: "Epilogue-Bold",
   },
   zipFilterRow: {
     flexDirection: "row",
@@ -867,11 +861,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 10,
     fontSize: 15,
+    fontFamily: "Epilogue-Regular",
   },
   iconButton: {
-  padding: 10,
-  justifyContent: "center",
-  alignItems: "center",
+    padding: 10,
+    justifyContent: "center",
+    alignItems: "center",
   },
   testButton: {
     backgroundColor: "#59C1BD",
@@ -882,8 +877,8 @@ const styles = StyleSheet.create({
   },
   testButtonText: {
     color: "#fff",
-    fontWeight: "700",
     fontSize: 15,
+    fontFamily: "Epilogue-Bold",
   },
   emptyCard: {
     borderWidth: 1,
@@ -892,12 +887,13 @@ const styles = StyleSheet.create({
   },
   emptyTitle: {
     fontSize: 20,
-    fontWeight: "700",
     marginBottom: 6,
+    fontFamily: "Epilogue-Bold",
   },
   emptyText: {
     fontSize: 15,
     lineHeight: 22,
+    fontFamily: "Epilogue-Regular",
   },
   postCard: {
     borderWidth: 1,
@@ -923,8 +919,8 @@ const styles = StyleSheet.create({
   },
   username: {
     fontSize: 18,
-    fontWeight: "700",
     marginBottom: 3,
+    fontFamily: "Epilogue-Bold",
   },
   locationRow: {
     flexDirection: "row",
@@ -932,6 +928,7 @@ const styles = StyleSheet.create({
   },
   locationText: {
     fontSize: 14,
+    fontFamily: "Epilogue-Regular",
   },
   postImage: {
     width: "100%",
@@ -956,7 +953,7 @@ const styles = StyleSheet.create({
   },
   actionCount: {
     fontSize: 14,
-    fontWeight: "600",
+    fontFamily: "Epilogue-Bold",
   },
   postStatsRow: {
     paddingHorizontal: 14,
@@ -965,6 +962,7 @@ const styles = StyleSheet.create({
   postStatsText: {
     fontSize: 13,
     lineHeight: 18,
+    fontFamily: "Epilogue-Regular",
   },
   postBody: {
     paddingHorizontal: 14,
@@ -973,25 +971,27 @@ const styles = StyleSheet.create({
   captionUsername: {
     fontSize: 16,
     lineHeight: 24,
-    fontWeight: "700",
     marginBottom: 8,
+    fontFamily: "Epilogue-Bold",
   },
   captionText: {
-    fontWeight: "400",
+    fontFamily: "Epilogue-Regular",
   },
   detailText: {
     fontSize: 15,
     lineHeight: 22,
     marginBottom: 2,
+    fontFamily: "Epilogue-Regular",
   },
   detailLabel: {
-    fontWeight: "700",
+    fontFamily: "Epilogue-Bold",
   },
   dateText: {
     marginTop: 10,
     fontSize: 13,
     textTransform: "uppercase",
     letterSpacing: 0.4,
+    fontFamily: "Epilogue-Regular",
   },
   commentsSection: {
     borderTopWidth: 1,
@@ -1006,13 +1006,13 @@ const styles = StyleSheet.create({
   },
   commentUsername: {
     fontSize: 14,
-    fontWeight: "700",
     lineHeight: 20,
+    fontFamily: "Epilogue-Bold",
   },
   commentText: {
     fontSize: 14,
-    fontWeight: "400",
     lineHeight: 20,
+    fontFamily: "Epilogue-Regular",
   },
   commentInputRow: {
     flexDirection: "row",
@@ -1026,5 +1026,6 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 14,
     paddingVertical: 6,
+    fontFamily: "Epilogue-Regular",
   },
 });
