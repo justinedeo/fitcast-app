@@ -1,95 +1,70 @@
-## Comprehensive Steps for getting the app up and running
+# FitCast
 
-## 1. Setting up git
+## Course
+CSCI 440-Capstone Final
 
-   # Prelude:
+## Team
+Justine  
+Gabe  
+Caitlyn  
+Ian  
 
-   Run the following command in a terminal:
+---
 
-   winget install --id Git.Git -e --source winget
+## Overview
 
-   # Part 1: Get a token
+FitCast is a mobile application that combines real-time weather data, social outfit sharing, and AI-powered recommendations to help users decide what to wear. Users can post outfits, explore other users, and receive personalized suggestions based on weather conditions and past feedback.
 
-   1. Log in to github
+---
 
-   2. Navigate to your Developer settings by clicking your profile picture in the top-right corner, selecting Settings, and then choosing Developer settings from the left sidebar
+## Setup Instructions
 
-   3. Go to Personal access tokens and select Tokens (classic)
+### 1. Clone the Repository (final-tests branch)
+git clone -b final-tests https://github.com/justinedeo/fitcast-app.git  
+cd fitcast-app  
 
-   4. Click the Generate new token button
+## DO NOT CLONE MAIN
 
-   5. Give your token a descriptive name and set an expiration date
+---
 
-   6. Select the necessary scopes (permissions). For typical Git operations like pushing to repositories, you will need the repo scope (full control of private repositories)
+### 2. Install Dependencies
+npm install  
 
-   (I used these permissions: admin:enterprise, admin:gpg_key, admin:org, admin:org_hook, admin:public_key, admin:repo_hook, admin:ssh_signing_key, audit_log, codespace, copilot, delete:packages, delete_repo, gist, notifications, project, repo, user, workflow, write:discussion, write:network_configurations, write:packages)
+npx expo install @expo/vector-icons  
+npx expo install expo-image-picker  
+npx expo install expo-notifications  
+npx expo install expo-router  
+npx expo install react-native-safe-area-context  
+npx expo install expo-location  
 
-   7. Click generate token
+---
 
-   8. Copy the token immediately. You will not be able to see it again after you leave the page, so store it securely. 
+### 3. Add Configuration Files
 
-   # Part 2: Configure your terminal
+Drag `firebaseConfig.ts` into:
+services/firebaseConfig.ts  
 
-   1. Run the login command in your terminal: git auth login
+Drag `.env` into the root of the project:
+.env  
 
-   2. Follow the steps in the login command
+The `.env` file should contain:
+EXPO_PUBLIC_WEATHER_API_KEY=your_openweather_api_key  
+EXPO_PUBLIC_GEMINI_API_KEY=your_gemini_api_key
 
+---
 
-### Choose the folder you want to set the project up in
+### 4. Run the App
+npx expo start -c  
 
-## 2. Open a terminal in that folder
+If using Codespaces or experiencing connection issues:
+npx expo start -c --tunnel  
 
-For me this looks like:
- 
-## Downloading and Installing ##
-   
-   Start Menu Search - Powershell 
+---
 
-   Powershell opens
+## Notes
 
-   cd ..
+Firebase configuration is not included in the repository for security reasons, please request ignored files from Justine  
+Data Connect generated files are already included, no additional setup is required  
+Expo Go has limited support for notifications 
 
-   cd /Desktop/fitcast/
-
-   git clone https://github.com/justinedeo/fitcast-app
-
-   cd fitcast-app
-
-   npm install expo 
-
-   npm install firebase
-
-## 2. Getting your Keys Setup
-
-   Go to this link: https://drive.google.com/drive/folders/1Sy8w283TwVkSW7WleJXlqGqILofH0i9Q?usp=sharing and download both the .env file and the firebaseConfig.ts
-
-   the env file goes in the apps root folder /fitcast-app/
-
-   the firebaseConfig.ts file goes in a new folder called services, the services folder goes in /fitcast-app/, it should look like /fitcast-app/services/
-
-## 3. Creating a branch to work in
-
-   Open vs studio code and open an integrated terminal in the root folder of the app, /fitcast-app/
-
-   download the "firebase data connect" extension and enable it in vs studio code
-
-   you will have to sign in with the account that is connected to the database already (caitlyncbeam@gmail.com, gpipes1@leomail.tamuc.edu, Morrow4242@gmail.com, justinefdeo@gmail.com)
-
-   Run the following commands:
-
-   git checkout main
-
-   git pull origin main
-
-   git checkout -b <Name of the branch you want to create here>
-
-   git add .
-
-   git stash
-
-   git commit -m "EmptyCommit"
-
-   git push -u origin <Your branch>
-
-   firebase dataconnect:sdk:generate
-
+Thanks for trying it out and thanks for a great semester Professor Alsmirat!
