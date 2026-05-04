@@ -1,0 +1,1 @@
+export const deletedPostIds = new Set<string>();

@@ -4,21 +4,24 @@ import { router } from "expo-router";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import React, { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    Alert,
-    Image,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    useColorScheme,
-    View,
+  ActivityIndicator,
+  Alert,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  useColorScheme,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { auth, dc, storage } from "../../services/firebaseConfig";
+import { setCachedUserProfile } from "../../services/profileCache";
 import { getUserProfile, updateUserProfile } from "../../src/dataconnect-generated";
+
+const DEFAULT_AVATAR = require("../../assets/images/placeholderImg.png");
 
 export default function EditProfile() {
   const colorScheme = useColorScheme();
@@ -35,7 +38,6 @@ export default function EditProfile() {
 
   const theme = {
     background: isDark ? "#000" : "#F7F8EC",
-    card: isDark ? "#121212" : "#FFFFFF",
     text: isDark ? "#FFFFFF" : "#111111",
     input: isDark ? "#1E1E1E" : "#F1F5F9",
     border: isDark ? "#333333" : "#E5E7EB",
@@ -125,7 +127,7 @@ export default function EditProfile() {
         photoUrl = await uploadImage(imageUri);
       }
 
-      await updateUserProfile(dc, {
+      const updatedProfile = {
         id: user.uid,
         username: profile?.username || user.email?.split("@")[0] || "user",
         email: user.email || "",
@@ -133,7 +135,11 @@ export default function EditProfile() {
         bio: bio || null,
         location: location || null,
         profilePictureUrl: photoUrl,
-      });
+      };
+
+      await updateUserProfile(dc, updatedProfile);
+
+      setCachedUserProfile(updatedProfile);
 
       Alert.alert("Saved!", "Your profile has been updated.");
       router.back();
@@ -159,9 +165,7 @@ export default function EditProfile() {
         <View style={styles.container}>
           <TouchableOpacity onPress={pickImage} style={styles.imageWrapper}>
             <Image
-              source={{
-                uri: imageUri || "https://via.placeholder.com/150",
-              }}
+              source={imageUri ? { uri: imageUri } : DEFAULT_AVATAR}
               style={styles.avatar}
             />
             <View style={styles.editIcon}>
@@ -245,26 +249,10 @@ export default function EditProfile() {
 }
 
 const styles = StyleSheet.create({
-  center: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  container: {
-    padding: 20,
-    paddingTop: 12,
-    paddingBottom: 30,
-  },
-  imageWrapper: {
-    alignSelf: "center",
-    marginTop: 8,
-    marginBottom: 12,
-  },
-  avatar: {
-    width: 110,
-    height: 110,
-    borderRadius: 55,
-  },
+  center: { flex: 1, justifyContent: "center", alignItems: "center" },
+  container: { padding: 20, paddingTop: 12, paddingBottom: 30 },
+  imageWrapper: { alignSelf: "center", marginTop: 8, marginBottom: 12 },
+  avatar: { width: 110, height: 110, borderRadius: 55 },
   editIcon: {
     position: "absolute",
     bottom: 0,
@@ -273,38 +261,11 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 6,
   },
-  helperText: {
-    textAlign: "center",
-    marginBottom: 24,
-    fontSize: 14,
-  },
-  inputGroup: {
-    marginBottom: 16,
-  },
-  label: {
-    fontWeight: "600",
-    marginBottom: 6,
-    fontSize: 15,
-  },
-  input: {
-    borderRadius: 10,
-    padding: 12,
-    borderWidth: 1,
-    fontSize: 16,
-  },
-  textArea: {
-    minHeight: 90,
-    textAlignVertical: "top",
-  },
-  button: {
-    marginTop: 20,
-    padding: 14,
-    borderRadius: 12,
-    alignItems: "center",
-  },
-  buttonText: {
-    color: "#fff",
-    fontWeight: "700",
-    fontSize: 16,
-  },
+  helperText: { textAlign: "center", marginBottom: 24, fontSize: 14 },
+  inputGroup: { marginBottom: 16 },
+  label: { fontWeight: "600", marginBottom: 6, fontSize: 15 },
+  input: { borderRadius: 10, padding: 12, borderWidth: 1, fontSize: 16 },
+  textArea: { minHeight: 90, textAlignVertical: "top" },
+  button: { marginTop: 20, padding: 14, borderRadius: 12, alignItems: "center" },
+  buttonText: { color: "#fff", fontWeight: "700", fontSize: 16 },
 });

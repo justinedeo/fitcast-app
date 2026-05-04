@@ -1,7 +1,5 @@
-# dataconnect/schema/schema.gql
-
 type User @table {
-  id: String! @default(expr: "auth.uid") 
+  id: String! @default(expr: "auth.uid")
   username: String!
   email: String!
   displayName: String
@@ -10,7 +8,7 @@ type User @table {
   profilePictureUrl: String
   location: String
 }
-  
+
 type Post @table {
   user: User!
   content: String!
@@ -18,23 +16,27 @@ type Post @table {
   imageUrl: String!
   locationTag: String
   zipCode: String
-  top: String
-  bottom: String
-  outerwear: String
+  tops: [String!]
+  topMaterials: [String!]
+  bottoms: [String!]
+  bottomMaterials: [String!]
+  outerwear: [String!]
+  outerwearMaterials: [String!]
   wornAt: Timestamp
+  isPublic: Boolean! @default(expr: "true")
 }
 
 type Comment @table {
   user: User!
   post: Post!
   content: String!
-  createdAt: Timestamp!
+  createdAt: Timestamp! @default(expr: "request.time")
 }
 
 type Like @table(key: ["user", "post"]) {
   user: User!
   post: Post!
-  createdAt: Timestamp!
+  createdAt: Timestamp! @default(expr: "request.time")
 }
 
 type OutfitRecommendation @table {
@@ -42,14 +44,23 @@ type OutfitRecommendation @table {
   weatherCondition: String!
   temperatureRange: String!
   imageUrl: String!
-  createdAt: Timestamp!
+  createdAt: Timestamp! @default(expr: "request.time")
   description: String
-  clothingItems: [String]
+  clothingItems: [String!]
 }
 
 type SavedOutfit @table(key: ["user", "outfitRecommendation"]) {
   user: User!
   outfitRecommendation: OutfitRecommendation!
-  createdAt: Timestamp!
+  createdAt: Timestamp! @default(expr: "request.time")
   notes: String
+}
+
+type OutfitFeedback @table {
+  user: User!
+  post: Post!
+  rating: String!
+  temperature: Float
+  weatherCondition: String
+  createdAt: Timestamp! @default(expr: "request.time")
 }

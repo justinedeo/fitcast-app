@@ -418,3 +418,200 @@ Generated sources: index.d.ts [8025B] esm\index.esm.js [3561B] README.md [40931B
 [debug] [2026-03-18T05:10:23.004Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects [omitted]
 [debug] [2026-03-18T05:10:23.006Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects 200
 [debug] [2026-03-18T05:10:23.006Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects [omitted]
+[debug] [2026-04-13T17:04:18.405Z] [Firebase Plugin] Activating Firebase extension.
+[debug] [2026-04-13T17:04:28.955Z] [Firebase Plugin] requireAuthWrapper
+[debug] [2026-04-13T17:04:28.964Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-04-13T17:04:28.966Z] > authorizing via signed-in user (justinefdeo@gmail.com)
+[debug] [2026-04-13T17:04:28.976Z] Checked if tokens are valid: false, expires at: 1773821341671
+[debug] [2026-04-13T17:04:28.977Z] Checked if tokens are valid: false, expires at: 1773821341671
+[debug] [2026-04-13T17:04:28.979Z] > refreshing access token with scopes: []
+[debug] [2026-04-13T17:04:28.984Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-04-13T17:04:28.985Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-04-13T17:04:29.070Z] [Firebase Plugin] VSCode notification server listening on port 40001
+[info] [Firebase Plugin] Starting Data Connect toolkit (version 3.2.1) on port 50001
+[debug] [2026-04-13T17:04:32.618Z] I0413 12:04:32.573063   25316 control.go:100] [projects/emulator/locations/emulator/services/fitcast-app 7c7a] UpdateResources(): done
+Main schema: sources: schema\schema.gql [2044B] 
+Connector "example": sources: example\queries.gql [1879B] example\mutations.gql [1276B] 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0413 12:04:32.573063   25316 control.go:100] [projects/emulator/locations/emulator/services/fitcast-app 7c7a] UpdateResources(): done\nMain schema: sources: schema\\schema.gql [2044B] \nConnector \"example\": sources: example\\queries.gql [1879B] example\\mutations.gql [1276B] \n"}}
+[debug] [2026-04-13T17:04:32.620Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2026-04-13T17:04:32.621Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: port"}}
+[debug] [2026-04-13T17:04:32.621Z] Starting Data Connect Emulator with command {"binary":"C:\\Users\\justi\\.cache\\firebase\\emulators\\dataconnect-emulator-3.2.1.exe","args":["--logtostderr","-v=2","dev","--listen=localhost:50001","--config_dir=c:\\Users\\justi\\fitcast-app\\fitcast-app\\dataconnect","--enable_output_schema_extensions=true","--enable_output_generated_sdk=true"],"optionalArgs":["listen","config_dir","enable_output_schema_extensions","enable_output_generated_sdk"],"joinArgs":true,"shell":false,"port":9399} {"metadata":{"emulator":{"name":"dataconnect"},"message":"Starting Data Connect Emulator with command {\"binary\":\"C:\\\\Users\\\\justi\\\\.cache\\\\firebase\\\\emulators\\\\dataconnect-emulator-3.2.1.exe\",\"args\":[\"--logtostderr\",\"-v=2\",\"dev\",\"--listen=localhost:50001\",\"--config_dir=c:\\\\Users\\\\justi\\\\fitcast-app\\\\fitcast-app\\\\dataconnect\",\"--enable_output_schema_extensions=true\",\"--enable_output_generated_sdk=true\"],\"optionalArgs\":[\"listen\",\"config_dir\",\"enable_output_schema_extensions\",\"enable_output_generated_sdk\"],\"joinArgs\":true,\"shell\":false,\"port\":9399}"}}
+[info] i  dataconnect: Data Connect Emulator logging to dataconnect-debug.log {"metadata":{"emulator":{"name":"dataconnect"},"message":"Data Connect Emulator logging to \u001b[1mdataconnect-debug.log\u001b[22m"}}
+[debug] [2026-04-13T17:04:38.541Z] I0413 12:04:32.790346    8360 load.go:31] Reloading schema and connectors...
+I0413 12:04:32.926744    8360 control.go:100] [projects/emulator/locations/emulator/services/fitcast-app 85d6] UpdateResources(): done
+Main schema: sources: schema\schema.gql [2044B] 
+Connector "example": sources: example\mutations.gql [1276B] example\queries.gql [1879B] 
+I0413 12:04:32.981365    8360 codegen.go:80] [connector "example" javascriptSdk] Generating sources into "c:\\Users\\justi\\fitcast-app\\fitcast-app\\src\\dataconnect-generated"
+I0413 12:04:33.078127    8360 collector.go:107] schema extensions wrote into "c:\\Users\\justi\\fitcast-app\\fitcast-app\\dataconnect\\.dataconnect\\schema"
+Generated sources: main\input.gql [28173B] main\relation.gql [14318B] main\query.gql [5099B] main\mutation.gql [13679B] prelude.gql [80731B] main\implicit.gql [1261B] 
+I0413 12:04:33.144861    8360 collector.go:107] connector "example" javascriptSdk wrote into "c:\\Users\\justi\\fitcast-app\\fitcast-app\\src\\dataconnect-generated"
+Generated sources: esm\index.esm.js [3561B] README.md [40931B] react\package.json [460B] react\index.cjs.js [3439B] .guides/setup.md [1682B] esm\package.json [17B] react\esm\index.esm.js [3269B] react\README.md [48299B] index.d.ts [8025B] react\index.d.ts [3961B] react\esm\package.json [17B] index.cjs.js [4051B] package.json [863B] .guides/usage.md [3489B] .guides/config.json [236B] 
+I0413 12:04:33.385833    8360 installsdk.go:55] Package @dataconnect/generated is already installed. Skipping installation
+I0413 12:04:33.386355    8360 load.go:109] Finished reloading
+I0413 12:04:33.416186    8360 dev.go:104] Listening on address (HTTP + gRPC): 127.0.0.1:50001
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0413 12:04:32.790346    8360 load.go:31] Reloading schema and connectors...\nI0413 12:04:32.926744    8360 control.go:100] [projects/emulator/locations/emulator/services/fitcast-app 85d6] UpdateResources(): done\nMain schema: sources: schema\\schema.gql [2044B] \nConnector \"example\": sources: example\\mutations.gql [1276B] example\\queries.gql [1879B] \nI0413 12:04:32.981365    8360 codegen.go:80] [connector \"example\" javascriptSdk] Generating sources into \"c:\\\\Users\\\\justi\\\\fitcast-app\\\\fitcast-app\\\\src\\\\dataconnect-generated\"\nI0413 12:04:33.078127    8360 collector.go:107] schema extensions wrote into \"c:\\\\Users\\\\justi\\\\fitcast-app\\\\fitcast-app\\\\dataconnect\\\\.dataconnect\\\\schema\"\nGenerated sources: main\\input.gql [28173B] main\\relation.gql [14318B] main\\query.gql [5099B] main\\mutation.gql [13679B] prelude.gql [80731B] main\\implicit.gql [1261B] \nI0413 12:04:33.144861    8360 collector.go:107] connector \"example\" javascriptSdk wrote into \"c:\\\\Users\\\\justi\\\\fitcast-app\\\\fitcast-app\\\\src\\\\dataconnect-generated\"\nGenerated sources: esm\\index.esm.js [3561B] README.md [40931B] react\\package.json [460B] react\\index.cjs.js [3439B] .guides/setup.md [1682B] esm\\package.json [17B] react\\esm\\index.esm.js [3269B] react\\README.md [48299B] index.d.ts [8025B] react\\index.d.ts [3961B] react\\esm\\package.json [17B] index.cjs.js [4051B] package.json [863B] .guides/usage.md [3489B] .guides/config.json [236B] \nI0413 12:04:33.385833    8360 installsdk.go:55] Package @dataconnect/generated is already installed. Skipping installation\nI0413 12:04:33.386355    8360 load.go:109] Finished reloading\nI0413 12:04:33.416186    8360 dev.go:104] Listening on address (HTTP + gRPC): 127.0.0.1:50001\n"}}
+[debug] [2026-04-13T17:04:45.720Z] I0413 12:04:39.968449    8360 engine.go:210] [projects/emulator/locations/emulator/services/fitcast-app 85d6] ExecuteGraphqlRead query IntrospectionQuery: succeeded. 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0413 12:04:39.968449    8360 engine.go:210] [projects/emulator/locations/emulator/services/fitcast-app 85d6] ExecuteGraphqlRead query IntrospectionQuery: succeeded. \n"}}
+[debug] [2026-04-13T17:04:48.230Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-04-13T17:04:48.230Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-04-13T17:04:48.277Z] [Firebase Plugin] User found:  justinefdeo@gmail.com
+[info] [Firebase Plugin] (Core:Project) New user detected, fetching projects
+[debug] [2026-04-13T17:04:48.281Z] Checked if tokens are valid: true, expires at: 1776103487231
+[debug] [2026-04-13T17:04:48.284Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects pageSize=1000
+[debug] [2026-04-13T17:04:49.192Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects 200
+[debug] [2026-04-13T17:04:49.193Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects [omitted]
+[info] [Firebase Plugin] Stopping Data Connect toolkit
+[warn] !  Data Connect Emulator has exited upon receiving signal: SIGINT 
+[debug] [2026-04-13T17:19:03.503Z] [Firebase Plugin] Activating Firebase extension.
+[debug] [2026-04-13T17:19:17.419Z] [Firebase Plugin] requireAuthWrapper
+[debug] [2026-04-13T17:19:17.428Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-04-13T17:19:17.431Z] > authorizing via signed-in user (justinefdeo@gmail.com)
+[debug] [2026-04-13T17:19:17.443Z] Checked if tokens are valid: true, expires at: 1776103487231
+[debug] [2026-04-13T17:19:17.444Z] Checked if tokens are valid: true, expires at: 1776103487231
+[debug] [2026-04-13T17:19:17.447Z] [Firebase Plugin] User found:  justinefdeo@gmail.com
+[info] [Firebase Plugin] (Core:Project) New user detected, fetching projects
+[debug] [2026-04-13T17:19:17.452Z] Checked if tokens are valid: true, expires at: 1776103487231
+[debug] [2026-04-13T17:19:17.457Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects pageSize=1000
+[debug] [2026-04-13T17:19:17.502Z] [Firebase Plugin] VSCode notification server listening on port 40001
+[info] [Firebase Plugin] Starting Data Connect toolkit (version 3.3.1) on port 50001
+[info] i  dataconnect: downloading dataconnect-emulator-3.3.1.exe... {"metadata":{"emulator":{"name":"dataconnect"},"message":"downloading dataconnect-emulator-3.3.1.exe..."}}
+[debug] [2026-04-13T17:19:18.413Z] >>> [apiv2][query] GET https://storage.googleapis.com/firemat-preview-drop/emulator/dataconnect-emulator-windows-amd64-v3.3.1 
+[debug] [2026-04-13T17:19:18.804Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects 200
+[debug] [2026-04-13T17:19:18.807Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects [omitted]
+[debug] [2026-04-13T17:19:18.854Z] <<< [apiv2][status] GET https://storage.googleapis.com/firemat-preview-drop/emulator/dataconnect-emulator-windows-amd64-v3.3.1 200
+[debug] [2026-04-13T17:19:18.855Z] <<< [apiv2][body] GET https://storage.googleapis.com/firemat-preview-drop/emulator/dataconnect-emulator-windows-amd64-v3.3.1 [stream]
+[info] i  dataconnect: Removing outdated emulator files: dataconnect-emulator-3.1.4.exe {"metadata":{"emulator":{"name":"dataconnect"},"message":"Removing outdated emulator files: dataconnect-emulator-3.1.4.exe"}}
+[info] i  dataconnect: Removing outdated emulator files: dataconnect-emulator-3.2.0.exe {"metadata":{"emulator":{"name":"dataconnect"},"message":"Removing outdated emulator files: dataconnect-emulator-3.2.0.exe"}}
+[info] i  dataconnect: Removing outdated emulator files: dataconnect-emulator-3.2.1.exe {"metadata":{"emulator":{"name":"dataconnect"},"message":"Removing outdated emulator files: dataconnect-emulator-3.2.1.exe"}}
+[debug] [2026-04-13T17:19:24.176Z] I0413 12:19:24.154754   27548 control.go:100] [projects/emulator/locations/emulator/services/fitcast-app 997b] UpdateResources(): done
+Main schema: sources: schema\schema.gql [2044B] 
+Connector "example": sources: example\queries.gql [1879B] example\mutations.gql [1276B] 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0413 12:19:24.154754   27548 control.go:100] [projects/emulator/locations/emulator/services/fitcast-app 997b] UpdateResources(): done\nMain schema: sources: schema\\schema.gql [2044B] \nConnector \"example\": sources: example\\queries.gql [1879B] example\\mutations.gql [1276B] \n"}}
+[debug] [2026-04-13T17:19:24.179Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2026-04-13T17:19:24.180Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: port"}}
+[debug] [2026-04-13T17:19:24.181Z] Starting Data Connect Emulator with command {"binary":"C:\\Users\\justi\\.cache\\firebase\\emulators\\dataconnect-emulator-3.3.1.exe","args":["--logtostderr","-v=2","dev","--listen=localhost:50001","--config_dir=c:\\Users\\justi\\fitcast-app\\fitcast-app\\dataconnect","--enable_output_schema_extensions=true","--enable_output_generated_sdk=true"],"optionalArgs":["listen","config_dir","enable_output_schema_extensions","enable_output_generated_sdk"],"joinArgs":true,"shell":false,"port":9399} {"metadata":{"emulator":{"name":"dataconnect"},"message":"Starting Data Connect Emulator with command {\"binary\":\"C:\\\\Users\\\\justi\\\\.cache\\\\firebase\\\\emulators\\\\dataconnect-emulator-3.3.1.exe\",\"args\":[\"--logtostderr\",\"-v=2\",\"dev\",\"--listen=localhost:50001\",\"--config_dir=c:\\\\Users\\\\justi\\\\fitcast-app\\\\fitcast-app\\\\dataconnect\",\"--enable_output_schema_extensions=true\",\"--enable_output_generated_sdk=true\"],\"optionalArgs\":[\"listen\",\"config_dir\",\"enable_output_schema_extensions\",\"enable_output_generated_sdk\"],\"joinArgs\":true,\"shell\":false,\"port\":9399}"}}
+[info] i  dataconnect: Data Connect Emulator logging to dataconnect-debug.log {"metadata":{"emulator":{"name":"dataconnect"},"message":"Data Connect Emulator logging to \u001b[1mdataconnect-debug.log\u001b[22m"}}
+[debug] [2026-04-13T17:19:24.309Z] I0413 12:19:24.309716   21656 load.go:31] Reloading schema and connectors...
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0413 12:19:24.309716   21656 load.go:31] Reloading schema and connectors...\n"}}
+[debug] [2026-04-13T17:19:24.350Z] I0413 12:19:24.349466   21656 control.go:100] [projects/emulator/locations/emulator/services/fitcast-app 9094] UpdateResources(): done
+Main schema: sources: schema\schema.gql [2044B] 
+Connector "example": sources: example\mutations.gql [1276B] example\queries.gql [1879B] 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0413 12:19:24.349466   21656 control.go:100] [projects/emulator/locations/emulator/services/fitcast-app 9094] UpdateResources(): done\nMain schema: sources: schema\\schema.gql [2044B] \nConnector \"example\": sources: example\\mutations.gql [1276B] example\\queries.gql [1879B] \n"}}
+[debug] [2026-04-13T17:19:24.384Z] I0413 12:19:24.384777   21656 codegen.go:101] [connector "example" javascriptSdk] Generating sources into "c:\\Users\\justi\\fitcast-app\\fitcast-app\\src\\dataconnect-generated"
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0413 12:19:24.384777   21656 codegen.go:101] [connector \"example\" javascriptSdk] Generating sources into \"c:\\\\Users\\\\justi\\\\fitcast-app\\\\fitcast-app\\\\src\\\\dataconnect-generated\"\n"}}
+[debug] [2026-04-13T17:19:25.650Z] I0413 12:19:24.422761   21656 collector.go:107] schema extensions wrote into "c:\\Users\\justi\\fitcast-app\\fitcast-app\\dataconnect\\.dataconnect\\schema"
+Generated sources: main\implicit.gql [1261B] main\input.gql [28927B] main\relation.gql [14318B] main\query.gql [5099B] main\mutation.gql [13679B] prelude.gql [80888B] 
+I0413 12:19:24.490144   21656 collector.go:107] connector "example" javascriptSdk wrote into "c:\\Users\\justi\\fitcast-app\\fitcast-app\\src\\dataconnect-generated"
+Generated sources: package.json [853B] react\index.cjs.js [3439B] .guides/setup.md [1682B] .guides/config.json [236B] index.d.ts [8350B] react\README.md [48299B] index.cjs.js [5636B] react\index.d.ts [3961B] react\package.json [460B] react\esm\package.json [17B] .guides/usage.md [3489B] esm\index.esm.js [5136B] README.md [41235B] react\esm\index.esm.js [3269B] esm\package.json [17B] 
+I0413 12:19:24.596611   21656 installsdk.go:55] Package @dataconnect/generated is already installed. Skipping installation
+I0413 12:19:24.596611   21656 load.go:109] Finished reloading
+I0413 12:19:24.658716   21656 dev.go:104] Listening on address (HTTP + gRPC): 127.0.0.1:50001
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0413 12:19:24.422761   21656 collector.go:107] schema extensions wrote into \"c:\\\\Users\\\\justi\\\\fitcast-app\\\\fitcast-app\\\\dataconnect\\\\.dataconnect\\\\schema\"\nGenerated sources: main\\implicit.gql [1261B] main\\input.gql [28927B] main\\relation.gql [14318B] main\\query.gql [5099B] main\\mutation.gql [13679B] prelude.gql [80888B] \nI0413 12:19:24.490144   21656 collector.go:107] connector \"example\" javascriptSdk wrote into \"c:\\\\Users\\\\justi\\\\fitcast-app\\\\fitcast-app\\\\src\\\\dataconnect-generated\"\nGenerated sources: package.json [853B] react\\index.cjs.js [3439B] .guides/setup.md [1682B] .guides/config.json [236B] index.d.ts [8350B] react\\README.md [48299B] index.cjs.js [5636B] react\\index.d.ts [3961B] react\\package.json [460B] react\\esm\\package.json [17B] .guides/usage.md [3489B] esm\\index.esm.js [5136B] README.md [41235B] react\\esm\\index.esm.js [3269B] esm\\package.json [17B] \nI0413 12:19:24.596611   21656 installsdk.go:55] Package @dataconnect/generated is already installed. Skipping installation\nI0413 12:19:24.596611   21656 load.go:109] Finished reloading\nI0413 12:19:24.658716   21656 dev.go:104] Listening on address (HTTP + gRPC): 127.0.0.1:50001\n"}}
+[debug] [2026-04-13T17:19:36.815Z] I0413 12:19:36.815743   21656 engine.go:209] [projects/emulator/locations/emulator/services/fitcast-app 9094] ExecuteGraphqlRead query IntrospectionQuery: succeeded. 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0413 12:19:36.815743   21656 engine.go:209] [projects/emulator/locations/emulator/services/fitcast-app 9094] ExecuteGraphqlRead query IntrospectionQuery: succeeded. \n"}}
+[debug] [2026-05-02T04:42:02.830Z] [Firebase Plugin] Activating Firebase extension.
+[info] [Firebase Plugin] Unable to check firebase-tools installation: TypeError: fetch failed
+[debug] [2026-05-02T04:42:23.116Z] [Firebase Plugin] requireAuthWrapper
+[debug] [2026-05-02T04:42:23.122Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-05-02T04:42:23.123Z] > authorizing via signed-in user (justinefdeo@gmail.com)
+[debug] [2026-05-02T04:42:23.133Z] Checked if tokens are valid: false, expires at: 1776103487231
+[debug] [2026-05-02T04:42:23.134Z] Checked if tokens are valid: false, expires at: 1776103487231
+[debug] [2026-05-02T04:42:23.135Z] > refreshing access token with scopes: []
+[debug] [2026-05-02T04:42:23.139Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-05-02T04:42:23.140Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-05-02T04:42:23.177Z] [Firebase Plugin] VSCode notification server listening on port 40001
+[info] [Firebase Plugin] Starting SQL Connect toolkit (version 3.4.5) on port 50001
+[info] i  dataconnect: downloading dataconnect-emulator-3.4.5.exe... {"metadata":{"emulator":{"name":"dataconnect"},"message":"downloading dataconnect-emulator-3.4.5.exe..."}}
+[debug] [2026-05-02T04:42:32.657Z] >>> [apiv2][query] GET https://storage.googleapis.com/firemat-preview-drop/emulator/dataconnect-emulator-windows-amd64-v3.4.5 
+[debug] [2026-05-02T04:42:33.690Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-05-02T04:42:33.691Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-05-02T04:42:33.753Z] [Firebase Plugin] User found:  justinefdeo@gmail.com
+[info] [Firebase Plugin] (Core:Project) New user detected, fetching projects
+[debug] [2026-05-02T04:42:33.758Z] Checked if tokens are valid: true, expires at: 1777700552692
+[debug] [2026-05-02T04:42:33.761Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects pageSize=1000
+[debug] [2026-05-02T04:42:33.815Z] <<< [apiv2][status] GET https://storage.googleapis.com/firemat-preview-drop/emulator/dataconnect-emulator-windows-amd64-v3.4.5 200
+[debug] [2026-05-02T04:42:33.816Z] <<< [apiv2][body] GET https://storage.googleapis.com/firemat-preview-drop/emulator/dataconnect-emulator-windows-amd64-v3.4.5 [stream]
+[debug] [2026-05-02T04:42:39.062Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects 200
+[debug] [2026-05-02T04:42:39.063Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects [omitted]
+[info] i  dataconnect: Removing outdated emulator files: dataconnect-emulator-3.3.1.exe {"metadata":{"emulator":{"name":"dataconnect"},"message":"Removing outdated emulator files: dataconnect-emulator-3.3.1.exe"}}
+[debug] [2026-05-02T04:42:59.672Z] I0501 23:42:59.632457   21720 control.go:100] [projects/emulator/locations/emulator/services/fitcast-app 7dd6] UpdateResources(): done
+Main schema: sources: schema\schema.gql [2044B] 
+Connector "example": sources: example\mutations.gql [1276B] example\queries.gql [1879B] 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0501 23:42:59.632457   21720 control.go:100] [projects/emulator/locations/emulator/services/fitcast-app 7dd6] UpdateResources(): done\nMain schema: sources: schema\\schema.gql [2044B] \nConnector \"example\": sources: example\\mutations.gql [1276B] example\\queries.gql [1879B] \n"}}
+[debug] [2026-05-02T04:42:59.675Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2026-05-02T04:42:59.675Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: port"}}
+[debug] [2026-05-02T04:42:59.676Z] Starting SQL Connect Emulator with command {"binary":"C:\\Users\\justi\\.cache\\firebase\\emulators\\dataconnect-emulator-3.4.5.exe","args":["--logtostderr","-v=2","dev","--listen=localhost:50001","--config_dir=c:\\Users\\justi\\fitcast-app\\fitcast-app\\dataconnect","--enable_output_schema_extensions=true","--enable_output_generated_sdk=true"],"optionalArgs":["listen","config_dir","enable_output_schema_extensions","enable_output_generated_sdk"],"joinArgs":true,"shell":false,"port":9399} {"metadata":{"emulator":{"name":"dataconnect"},"message":"Starting SQL Connect Emulator with command {\"binary\":\"C:\\\\Users\\\\justi\\\\.cache\\\\firebase\\\\emulators\\\\dataconnect-emulator-3.4.5.exe\",\"args\":[\"--logtostderr\",\"-v=2\",\"dev\",\"--listen=localhost:50001\",\"--config_dir=c:\\\\Users\\\\justi\\\\fitcast-app\\\\fitcast-app\\\\dataconnect\",\"--enable_output_schema_extensions=true\",\"--enable_output_generated_sdk=true\"],\"optionalArgs\":[\"listen\",\"config_dir\",\"enable_output_schema_extensions\",\"enable_output_generated_sdk\"],\"joinArgs\":true,\"shell\":false,\"port\":9399}"}}
+[info] i  dataconnect: SQL Connect Emulator logging to dataconnect-debug.log {"metadata":{"emulator":{"name":"dataconnect"},"message":"SQL Connect Emulator logging to \u001b[1mdataconnect-debug.log\u001b[22m"}}
+[debug] [2026-05-02T04:42:59.755Z] I0501 23:42:59.750852   13520 load.go:31] Reloading schema and connectors...
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0501 23:42:59.750852   13520 load.go:31] Reloading schema and connectors...\n"}}
+[debug] [2026-05-02T04:42:59.798Z] I0501 23:42:59.798159   13520 control.go:100] [projects/emulator/locations/emulator/services/fitcast-app 86d6] UpdateResources(): done
+Main schema: sources: schema\schema.gql [2044B] 
+Connector "example": sources: example\queries.gql [1879B] example\mutations.gql [1276B] 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0501 23:42:59.798159   13520 control.go:100] [projects/emulator/locations/emulator/services/fitcast-app 86d6] UpdateResources(): done\nMain schema: sources: schema\\schema.gql [2044B] \nConnector \"example\": sources: example\\queries.gql [1879B] example\\mutations.gql [1276B] \n"}}
+[debug] [2026-05-02T04:42:59.839Z] I0501 23:42:59.838013   13520 codegen.go:101] [connector "example" javascriptSdk] Generating sources into "c:\\Users\\justi\\fitcast-app\\fitcast-app\\src\\dataconnect-generated"
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0501 23:42:59.838013   13520 codegen.go:101] [connector \"example\" javascriptSdk] Generating sources into \"c:\\\\Users\\\\justi\\\\fitcast-app\\\\fitcast-app\\\\src\\\\dataconnect-generated\"\n"}}
+[debug] [2026-05-02T04:42:59.906Z] I0501 23:42:59.876050   13520 collector.go:107] schema extensions wrote into "c:\\Users\\justi\\fitcast-app\\fitcast-app\\dataconnect\\.dataconnect\\schema"
+Generated sources: prelude.gql [82799B] main\mutation.gql [13679B] main\implicit.gql [1261B] main\input.gql [28927B] main\relation.gql [14318B] main\query.gql [5099B] 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0501 23:42:59.876050   13520 collector.go:107] schema extensions wrote into \"c:\\\\Users\\\\justi\\\\fitcast-app\\\\fitcast-app\\\\dataconnect\\\\.dataconnect\\\\schema\"\nGenerated sources: prelude.gql [82799B] main\\mutation.gql [13679B] main\\implicit.gql [1261B] main\\input.gql [28927B] main\\relation.gql [14318B] main\\query.gql [5099B] \n"}}
+[debug] [2026-05-02T04:42:59.944Z] I0501 23:42:59.943977   13520 collector.go:107] connector "example" javascriptSdk wrote into "c:\\Users\\justi\\fitcast-app\\fitcast-app\\src\\dataconnect-generated"
+Generated sources: package.json [853B] react\index.d.ts [3961B] .guides/setup.md [1682B] esm\index.esm.js [5136B] README.md [41235B] react\package.json [460B] react\esm\index.esm.js [3269B] react\README.md [48299B] index.d.ts [8350B] esm\package.json [17B] index.cjs.js [5636B] .guides/usage.md [3489B] react\esm\package.json [17B] react\index.cjs.js [3439B] .guides/config.json [236B] 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0501 23:42:59.943977   13520 collector.go:107] connector \"example\" javascriptSdk wrote into \"c:\\\\Users\\\\justi\\\\fitcast-app\\\\fitcast-app\\\\src\\\\dataconnect-generated\"\nGenerated sources: package.json [853B] react\\index.d.ts [3961B] .guides/setup.md [1682B] esm\\index.esm.js [5136B] README.md [41235B] react\\package.json [460B] react\\esm\\index.esm.js [3269B] react\\README.md [48299B] index.d.ts [8350B] esm\\package.json [17B] index.cjs.js [5636B] .guides/usage.md [3489B] react\\esm\\package.json [17B] react\\index.cjs.js [3439B] .guides/config.json [236B] \n"}}
+[debug] [2026-05-02T04:43:00.151Z] I0501 23:43:00.151813   13520 installsdk.go:55] Package @dataconnect/generated is already installed. Skipping installation
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0501 23:43:00.151813   13520 installsdk.go:55] Package @dataconnect/generated is already installed. Skipping installation\n"}}
+[debug] [2026-05-02T04:43:00.153Z] I0501 23:43:00.151813   13520 load.go:109] Finished reloading
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0501 23:43:00.151813   13520 load.go:109] Finished reloading\n"}}
+[debug] [2026-05-02T04:43:00.250Z] I0501 23:43:00.238665   13520 dev.go:104] Listening on address (HTTP + gRPC): 127.0.0.1:50001
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0501 23:43:00.238665   13520 dev.go:104] Listening on address (HTTP + gRPC): 127.0.0.1:50001\n"}}
+[debug] [2026-05-02T04:43:00.544Z] I0501 23:43:00.540720   13520 engine.go:209] [projects/emulator/locations/emulator/services/fitcast-app 86d6] ExecuteGraphqlRead query IntrospectionQuery: succeeded. 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0501 23:43:00.540720   13520 engine.go:209] [projects/emulator/locations/emulator/services/fitcast-app 86d6] ExecuteGraphqlRead query IntrospectionQuery: succeeded. \n"}}
+[info] [Firebase Plugin] Stopping SQL Connect toolkit
+[warn] !  SQL Connect Emulator has exited upon receiving signal: SIGINT 
+[debug] [2026-05-02T21:56:35.773Z] [Firebase Plugin] Activating Firebase extension.
+[info] [Firebase Plugin] Checked firebase-tools, is up to date!
+[debug] [2026-05-02T21:56:52.277Z] [Firebase Plugin] requireAuthWrapper
+[debug] [2026-05-02T21:56:52.296Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-05-02T21:56:52.297Z] > authorizing via signed-in user (justinefdeo@gmail.com)
+[debug] [2026-05-02T21:56:52.303Z] Checked if tokens are valid: false, expires at: 1777700552692
+[debug] [2026-05-02T21:56:52.304Z] Checked if tokens are valid: false, expires at: 1777700552692
+[debug] [2026-05-02T21:56:52.305Z] > refreshing access token with scopes: []
+[debug] [2026-05-02T21:56:52.308Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-05-02T21:56:52.309Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-05-02T21:56:52.325Z] [Firebase Plugin] VSCode notification server listening on port 40001
+[info] [Firebase Plugin] Starting SQL Connect toolkit (version 3.4.5) on port 50001
+[debug] [2026-05-02T21:56:54.376Z] I0502 16:56:54.336395    7396 control.go:100] [projects/emulator/locations/emulator/services/fitcast-app 8f87] UpdateResources(): done
+Main schema: sources: schema\schema.gql [2044B] 
+Connector "example": sources: example\queries.gql [1879B] example\mutations.gql [1276B] 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0502 16:56:54.336395    7396 control.go:100] [projects/emulator/locations/emulator/services/fitcast-app 8f87] UpdateResources(): done\nMain schema: sources: schema\\schema.gql [2044B] \nConnector \"example\": sources: example\\queries.gql [1879B] example\\mutations.gql [1276B] \n"}}
+[debug] [2026-05-02T21:56:54.378Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2026-05-02T21:56:54.379Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: port"}}
+[debug] [2026-05-02T21:56:54.379Z] Starting SQL Connect Emulator with command {"binary":"C:\\Users\\justi\\.cache\\firebase\\emulators\\dataconnect-emulator-3.4.5.exe","args":["--logtostderr","-v=2","dev","--listen=localhost:50001","--config_dir=c:\\Users\\justi\\fitcast-app\\fitcast-app\\dataconnect","--enable_output_schema_extensions=true","--enable_output_generated_sdk=true"],"optionalArgs":["listen","config_dir","enable_output_schema_extensions","enable_output_generated_sdk"],"joinArgs":true,"shell":false,"port":9399} {"metadata":{"emulator":{"name":"dataconnect"},"message":"Starting SQL Connect Emulator with command {\"binary\":\"C:\\\\Users\\\\justi\\\\.cache\\\\firebase\\\\emulators\\\\dataconnect-emulator-3.4.5.exe\",\"args\":[\"--logtostderr\",\"-v=2\",\"dev\",\"--listen=localhost:50001\",\"--config_dir=c:\\\\Users\\\\justi\\\\fitcast-app\\\\fitcast-app\\\\dataconnect\",\"--enable_output_schema_extensions=true\",\"--enable_output_generated_sdk=true\"],\"optionalArgs\":[\"listen\",\"config_dir\",\"enable_output_schema_extensions\",\"enable_output_generated_sdk\"],\"joinArgs\":true,\"shell\":false,\"port\":9399}"}}
+[info] i  dataconnect: SQL Connect Emulator logging to dataconnect-debug.log {"metadata":{"emulator":{"name":"dataconnect"},"message":"SQL Connect Emulator logging to \u001b[1mdataconnect-debug.log\u001b[22m"}}
+[debug] [2026-05-02T21:56:54.673Z] I0502 16:56:54.546495    6268 load.go:31] Reloading schema and connectors...
+I0502 16:56:54.602451    6268 control.go:100] [projects/emulator/locations/emulator/services/fitcast-app f2a3] UpdateResources(): done
+Main schema: sources: schema\schema.gql [2044B] 
+Connector "example": sources: example\mutations.gql [1276B] example\queries.gql [1879B] 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0502 16:56:54.546495    6268 load.go:31] Reloading schema and connectors...\nI0502 16:56:54.602451    6268 control.go:100] [projects/emulator/locations/emulator/services/fitcast-app f2a3] UpdateResources(): done\nMain schema: sources: schema\\schema.gql [2044B] \nConnector \"example\": sources: example\\mutations.gql [1276B] example\\queries.gql [1879B] \n"}}
+[debug] [2026-05-02T21:56:54.753Z] I0502 16:56:54.720431    6268 codegen.go:101] [connector "example" javascriptSdk] Generating sources into "c:\\Users\\justi\\fitcast-app\\fitcast-app\\src\\dataconnect-generated"
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0502 16:56:54.720431    6268 codegen.go:101] [connector \"example\" javascriptSdk] Generating sources into \"c:\\\\Users\\\\justi\\\\fitcast-app\\\\fitcast-app\\\\src\\\\dataconnect-generated\"\n"}}
+[debug] [2026-05-02T21:56:55.702Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-05-02T21:56:55.716Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-05-02T21:56:56.014Z] [Firebase Plugin] User found:  justinefdeo@gmail.com
+[info] [Firebase Plugin] (Core:Project) New user detected, fetching projects
+[debug] [2026-05-02T21:56:56.019Z] Checked if tokens are valid: true, expires at: 1777762614737
+[debug] [2026-05-02T21:56:56.022Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects pageSize=1000
+[debug] [2026-05-02T21:56:56.119Z] I0502 16:56:55.153422    6268 collector.go:107] schema extensions wrote into "c:\\Users\\justi\\fitcast-app\\fitcast-app\\dataconnect\\.dataconnect\\schema"
+Generated sources: prelude.gql [82799B] main\implicit.gql [1261B] main\input.gql [28927B] main\relation.gql [14318B] main\query.gql [5099B] main\mutation.gql [13679B] 
+I0502 16:56:55.364358    6268 collector.go:107] connector "example" javascriptSdk wrote into "c:\\Users\\justi\\fitcast-app\\fitcast-app\\src\\dataconnect-generated"
+Generated sources: react\package.json [460B] react\esm\package.json [17B] react\esm\index.esm.js [3269B] react\README.md [48299B] .guides/setup.md [1682B] index.d.ts [8350B] esm\index.esm.js [5136B] .guides/usage.md [3489B] package.json [853B] react\index.d.ts [3961B] react\index.cjs.js [3439B] esm\package.json [17B] index.cjs.js [5636B] README.md [41235B] .guides/config.json [236B] 
+I0502 16:56:56.028901    6268 installsdk.go:55] Package @dataconnect/generated is already installed. Skipping installation
+I0502 16:56:56.029413    6268 load.go:109] Finished reloading
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0502 16:56:55.153422    6268 collector.go:107] schema extensions wrote into \"c:\\\\Users\\\\justi\\\\fitcast-app\\\\fitcast-app\\\\dataconnect\\\\.dataconnect\\\\schema\"\nGenerated sources: prelude.gql [82799B] main\\implicit.gql [1261B] main\\input.gql [28927B] main\\relation.gql [14318B] main\\query.gql [5099B] main\\mutation.gql [13679B] \nI0502 16:56:55.364358    6268 collector.go:107] connector \"example\" javascriptSdk wrote into \"c:\\\\Users\\\\justi\\\\fitcast-app\\\\fitcast-app\\\\src\\\\dataconnect-generated\"\nGenerated sources: react\\package.json [460B] react\\esm\\package.json [17B] react\\esm\\index.esm.js [3269B] react\\README.md [48299B] .guides/setup.md [1682B] index.d.ts [8350B] esm\\index.esm.js [5136B] .guides/usage.md [3489B] package.json [853B] react\\index.d.ts [3961B] react\\index.cjs.js [3439B] esm\\package.json [17B] index.cjs.js [5636B] README.md [41235B] .guides/config.json [236B] \nI0502 16:56:56.028901    6268 installsdk.go:55] Package @dataconnect/generated is already installed. Skipping installation\nI0502 16:56:56.029413    6268 load.go:109] Finished reloading\n"}}
+[debug] [2026-05-02T21:56:56.385Z] I0502 16:56:56.118561    6268 dev.go:104] Listening on address (HTTP + gRPC): 127.0.0.1:50001
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0502 16:56:56.118561    6268 dev.go:104] Listening on address (HTTP + gRPC): 127.0.0.1:50001\n"}}
+[debug] [2026-05-02T21:56:57.578Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects 200
+[debug] [2026-05-02T21:56:57.580Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects [omitted]
+[debug] [2026-05-02T21:56:58.035Z] I0502 16:56:58.028260    6268 engine.go:209] [projects/emulator/locations/emulator/services/fitcast-app f2a3] ExecuteGraphqlRead query IntrospectionQuery: succeeded. 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0502 16:56:58.028260    6268 engine.go:209] [projects/emulator/locations/emulator/services/fitcast-app f2a3] ExecuteGraphqlRead query IntrospectionQuery: succeeded. \n"}}
+[warn] !  dataconnect: Fatal error occurred: 
+   SQL Connect Emulator has exited with code: 1, 
+   stopping all running emulators {"metadata":{"emulator":{"name":"dataconnect"},"message":"Fatal error occurred: \n   SQL Connect Emulator has exited with code: 1, \n   stopping all running emulators"}}

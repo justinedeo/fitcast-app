@@ -18,6 +18,7 @@ export default function TabsLayout() {
           switch (route.name) {
             case "home":
               return <Ionicons name="sunny" size={size} color={color} />;
+
             case "dashboard":
               return (
                 <MaterialCommunityIcons
@@ -26,22 +27,35 @@ export default function TabsLayout() {
                   color={color}
                 />
               );
+
+            case "discover":
+              return <Ionicons name="globe-sharp" size={size} color={color} />;
+
             case "post":
               return <Ionicons name="add-circle" size={40} color="#0D4C92" />;
+
             case "profile":
               return <Ionicons name="home" size={size} color={color} />;
+
             case "editProfile":
               return <Ionicons name="pencil" size={size} color={color} />;
+
             default:
               return null;
           }
         },
       })}
     >
+      {/* Hides index*/}
+      <Tabs.Screen name="index" options={{ href: null }} />
+
       <Tabs.Screen name="home" options={{ title: "Home" }} />
       <Tabs.Screen name="dashboard" options={{ title: "Community" }} />
+      <Tabs.Screen name="discover" options={{ title: "Discover" }} />
       <Tabs.Screen name="post" options={{ title: "Post" }} />
       <Tabs.Screen name="profile" options={{ title: "Profile" }} />
+
+      {/* hidden */}
       <Tabs.Screen name="editProfile" options={{ href: null }} />
     </Tabs>
   );

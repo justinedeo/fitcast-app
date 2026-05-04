@@ -1,13 +1,20 @@
 query listPosts @auth(level: PUBLIC) {
-  posts {
+  posts(
+    where: { isPublic: { eq: true } }
+    orderBy: [{ createdAt: DESC }]
+  ) {
     id
     content
     imageUrl
     locationTag
     zipCode
-    top
-    bottom
+    isPublic
+    tops
+    topMaterials
+    bottoms
+    bottomMaterials
     outerwear
+    outerwearMaterials
     wornAt
     createdAt
     user {
@@ -19,10 +26,58 @@ query listPosts @auth(level: PUBLIC) {
   }
 }
 
+query GetPostsByZip($zipCode: String!) @auth(level: PUBLIC) {
+  posts(
+    where: {
+      isPublic: { eq: true }
+      zipCode: { eq: $zipCode }
+    }
+    orderBy: [{ createdAt: DESC }]
+  ) {
+    id
+    content
+    imageUrl
+    locationTag
+    zipCode
+    isPublic
+    tops
+    topMaterials
+    bottoms
+    bottomMaterials
+    outerwear
+    outerwearMaterials
+    wornAt
+    createdAt
+    user {
+      id
+      username
+      displayName
+      profilePictureUrl
+    }
+  }
+}
+
+query GetUserPosts($userId: String!) @auth(level: USER) {
+  posts(
+    where: { user: { id: { eq: $userId } } }
+    orderBy: [{ createdAt: DESC }]
+  ) {
+    id
+    imageUrl
+    isPublic
+    createdAt
+  }
+}
+
 query getOutfits($userId: String!) @auth(level: USER) {
   outfitRecommendations(where: { user: { id: { eq: $userId } } }) {
+    id
     imageUrl
     description
+    weatherCondition
+    temperatureRange
+    clothingItems
+    createdAt
   }
 }
 
@@ -36,6 +91,36 @@ query listAllUsers @auth(level: USER) {
   }
 }
 
+query getLikesForPost($postId: UUID!) @auth(level: PUBLIC) {
+  likes(where: { postId: { eq: $postId } }) {
+    _id
+    postId
+    createdAt
+    user {
+      id
+      username
+      displayName
+    }
+  }
+}
+
+query getCommentsForPost($postId: UUID!) @auth(level: PUBLIC) {
+  comments(
+    where: { postId: { eq: $postId } }
+    orderBy: [{ createdAt: ASC }]
+  ) {
+    id
+    postId
+    content
+    createdAt
+    user {
+      id
+      username
+      displayName
+    }
+  }
+}
+
 query GetUserProfile($id: String!) @auth(level: USER) {
   user(id: $id) {
     id
@@ -45,5 +130,45 @@ query GetUserProfile($id: String!) @auth(level: USER) {
     location
     profilePictureUrl
     createdAt
+  }
+}
+
+query GetTodayPost($userId: String!) @auth(level: USER) {
+  posts(
+    where: { user: { id: { eq: $userId } } }
+    orderBy: { createdAt: DESC }
+    limit: 1
+  ) {
+    id
+    createdAt
+  }
+}
+
+query GetUserOutfitFeedback($userId: String!) @auth(level: USER) {
+  outfitFeedbacks(
+    where: { user: { id: { eq: $userId } } }
+    orderBy: [{ createdAt: DESC }]
+    limit: 20
+  ) {
+    id
+    rating
+    temperature
+    weatherCondition
+    createdAt
+    post {
+      id
+      content
+      imageUrl
+      locationTag
+      zipCode
+      tops
+      topMaterials
+      bottoms
+      bottomMaterials
+      outerwear
+      outerwearMaterials
+      wornAt
+      createdAt
+    }
   }
 }

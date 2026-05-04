@@ -1,0 +1,1 @@
+export const pendingCreatedPosts = new Map<string, any>();

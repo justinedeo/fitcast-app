@@ -38,10 +38,14 @@ mutation CreatePost(
   $imageUrl: String!,
   $locationTag: String,
   $zipCode: String,
-  $top: String,
-  $bottom: String,
-  $outerwear: String,
-  $wornAt: Timestamp
+  $tops: [String!],
+  $topMaterials: [String!],
+  $bottoms: [String!],
+  $bottomMaterials: [String!],
+  $outerwear: [String!],
+  $outerwearMaterials: [String!],
+  $wornAt: Timestamp,
+  $isPublic: Boolean!
 ) @auth(level: USER) {
   post_insert(data: {
     user: { id: $userId }
@@ -49,9 +53,65 @@ mutation CreatePost(
     imageUrl: $imageUrl
     locationTag: $locationTag
     zipCode: $zipCode
-    top: $top
-    bottom: $bottom
+    tops: $tops
+    topMaterials: $topMaterials
+    bottoms: $bottoms
+    bottomMaterials: $bottomMaterials
     outerwear: $outerwear
+    outerwearMaterials: $outerwearMaterials
     wornAt: $wornAt
+    isPublic: $isPublic
   })
+}
+
+mutation CreateLike(
+  $postId: UUID!,
+  $userId: String!
+) @auth(level: USER) {
+  like_insert(data: {
+    postId: $postId
+    userId: $userId
+  })
+}
+
+mutation DeleteLike(
+  $postId: UUID!,
+  $userId: String!
+) @auth(level: USER) {
+  like_delete(key: {
+    userId: $userId
+    postId: $postId
+  })
+}
+
+mutation CreateComment(
+  $postId: UUID!,
+  $userId: String!,
+  $content: String!
+) @auth(level: USER) {
+  comment_insert(data: {
+    postId: $postId
+    userId: $userId
+    content: $content
+  })
+}
+
+mutation CreateOutfitFeedback(
+  $userId: String!,
+  $postId: UUID!,
+  $rating: String!,
+  $temperature: Float,
+  $weatherCondition: String
+) @auth(level: USER) {
+  outfitFeedback_insert(data: {
+    user: { id: $userId }
+    post: { id: $postId }
+    rating: $rating
+    temperature: $temperature
+    weatherCondition: $weatherCondition
+  })
+}
+
+mutation DeletePost($id: UUID!) @auth(level: USER) {
+  post_delete(key: { id: $id })
 }

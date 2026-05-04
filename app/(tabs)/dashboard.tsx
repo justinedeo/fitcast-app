@@ -1,22 +1,40 @@
 import { Ionicons } from "@expo/vector-icons";
+import * as Location from "expo-location";
+import * as Notifications from "expo-notifications";
+import { useFocusEffect } from "expo-router";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
-    ActivityIndicator,
-    Image,
-    KeyboardAvoidingView,
-    Platform,
-    RefreshControl,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    useColorScheme,
-    View,
+  ActivityIndicator,
+  Alert,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  useColorScheme,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { dc } from "../../services/firebaseConfig";
-import { listPosts } from "../../src/dataconnect-generated";
+import { deletedPostIds } from "../../services/deletedPosts";
+import { auth, dc, NO_CACHE } from "../../services/firebaseConfig";
+import { pendingCreatedPosts } from "../../services/pendingPosts";
+import { cachedUserProfile } from "../../services/profileCache";
+import {
+  createComment,
+  createLike,
+  deleteLike,
+  getCommentsForPost,
+  getLikesForPost,
+  getUserProfile,
+  listPosts,
+} from "../../src/dataconnect-generated";
+
+const DEFAULT_AVATAR = require("../../assets/images/placeholderImg.png");
 
 type Comment = {
   id: string;
@@ -31,9 +49,13 @@ type FeedPost = {
   imageUrl: string;
   locationTag?: string | null;
   zipCode?: string | null;
-  top?: string | null;
-  bottom?: string | null;
-  outerwear?: string | null;
+  isPublic?: boolean;
+  tops?: string[] | null;
+  topMaterials?: string[] | null;
+  bottoms?: string[] | null;
+  bottomMaterials?: string[] | null;
+  outerwear?: string[] | null;
+  outerwearMaterials?: string[] | null;
   wornAt?: string | null;
   createdAt: string;
   user: {
@@ -45,23 +67,30 @@ type FeedPost = {
 };
 
 export default function Dashboard() {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
-
+  const isDark = useColorScheme() === "dark";
+  //posts currently in feed
   const [posts, setPosts] = useState<FeedPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [currentUsername, setCurrentUsername] = useState("");
+  const [zipInput, setZipInput] = useState("");
+  const [userZip, setUserZip] = useState("");
 
-  // like state
+  // track likes by user
   const [likedPosts, setLikedPosts] = useState<Record<string, boolean>>({});
   const [likeCounts, setLikeCounts] = useState<Record<string, number>>({});
 
-  // comment state
+  //comment pet postId
   const [comments, setComments] = useState<Record<string, Comment[]>>({});
   const [commentInputVisible, setCommentInputVisible] = useState<Record<string, boolean>>({});
   const [commentText, setCommentText] = useState<Record<string, string>>({});
 
   const inputRefs = useRef<Record<string, TextInput | null>>({});
+  const loadingInteractionsRef = useRef(false);
+
+  const pendingLikedPostsRef = useRef<Record<string, boolean>>({});
+  const pendingLikeCountsRef = useRef<Record<string, number>>({});
+  const pendingCommentsRef = useRef<Record<string, Comment[]>>({});
 
   const theme = {
     background: isDark ? "#000000" : "#F7F8EC",
@@ -73,91 +102,406 @@ export default function Dashboard() {
     input: isDark ? "#1E1E1E" : "#F3F4F6",
   };
 
-  const fetchPosts = useCallback(async () => {
+  const sortPosts = useCallback(
+    (feedPosts: FeedPost[]) => {
+      return [...feedPosts].sort((a, b) => {
+        const newestFirst =
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+
+        if (!userZip || !/^\d{5}$/.test(userZip)) return newestFirst;
+
+        const userZipNum = parseInt(userZip, 10);
+        const aZip = parseInt(a.zipCode || "0", 10);
+        const bZip = parseInt(b.zipCode || "0", 10);
+
+        const aHasZip = !!a.zipCode && !isNaN(aZip);
+        const bHasZip = !!b.zipCode && !isNaN(bZip);
+
+        if (!aHasZip && !bHasZip) return newestFirst;
+        if (!aHasZip) return 1;
+        if (!bHasZip) return -1;
+
+        const aDist = Math.abs(aZip - userZipNum);
+        const bDist = Math.abs(bZip - userZipNum);
+
+        return aDist !== bDist ? aDist - bDist : newestFirst;
+      });
+    },
+    [userZip]
+  );
+
+  const detectZip = async () => {
     try {
-      const { data } = await listPosts(dc);
-      const feedPosts = data?.posts ?? [];
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") return;
 
-      const sorted = [...feedPosts].sort((a, b) => {
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      const loc = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Balanced,
       });
 
-      setPosts(sorted as FeedPost[]);
-
-      const initialCounts: Record<string, number> = {};
-      const initialComments: Record<string, Comment[]> = {};
-      sorted.forEach((p) => {
-        initialCounts[p.id] = 0;
-        initialComments[p.id] = [];
+      const [geo] = await Location.reverseGeocodeAsync({
+        latitude: loc.coords.latitude,
+        longitude: loc.coords.longitude,
       });
-      setLikeCounts(initialCounts);
-      setComments(initialComments);
+
+      if (geo?.postalCode) {
+        setZipInput(geo.postalCode);
+        setUserZip(geo.postalCode);
+      }
     } catch (error) {
-      console.error("Error loading posts:", error);
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
+      console.error("Zip detect error:", error);
+    }
+  };
+
+  const applyZipFilter = () => {
+    const cleanZip = zipInput.trim();
+
+    if (cleanZip && !/^\d{5}$/.test(cleanZip)) {
+      Alert.alert("Invalid ZIP", "Please enter a 5-digit ZIP code.");
+      return;
+    }
+
+    setUserZip(cleanZip);
+  };
+
+  const loadCurrentUserProfile = useCallback(async () => {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    try {
+      const { data } = await getUserProfile(dc, { id: user.uid }, NO_CACHE);
+      const profile = data?.user;
+
+      setCurrentUsername(profile?.username || profile?.displayName || "");
+    } catch (error) {
+      console.error("Error loading current user profile:", error);
     }
   }, []);
 
+  const loadPostInteractions = useCallback(
+    async (postIds: string[], force = false) => {
+      const currentUser = auth.currentUser;
+
+      if (!postIds.length) return;
+      if (loadingInteractionsRef.current && !force) return;
+
+      loadingInteractionsRef.current = true;
+
+      const nextLiked: Record<string, boolean> = {};
+      const nextCounts: Record<string, number> = {};
+      const nextComments: Record<string, Comment[]> = {};
+
+      try {
+        for (const postId of postIds) {
+          const likesResult = await getLikesForPost(
+            dc,
+            { postId: postId as any },
+            NO_CACHE
+          );
+
+          const commentsResult = await getCommentsForPost(
+            dc,
+            { postId: postId as any },
+            NO_CACHE
+          );
+
+          const likes = likesResult.data?.likes ?? [];
+          const postComments = commentsResult.data?.comments ?? [];
+
+          const savedComments: Comment[] = postComments.map((comment) => ({
+            id: comment.id,
+            username:
+              comment.user?.displayName ||
+              comment.user?.username ||
+              comment.user?.id ||
+              "User",
+            text: comment.content,
+            createdAt: comment.createdAt ?? "",
+          }));
+
+          const pendingComments = pendingCommentsRef.current[postId] ?? [];
+
+          nextComments[postId] = [
+            ...savedComments,
+            ...pendingComments.filter(
+              (pending) =>
+                !savedComments.some(
+                  (saved) =>
+                    saved.text === pending.text &&
+                    saved.username === pending.username
+                )
+            ),
+          ];
+
+          const backendLiked =
+            !!currentUser &&
+            likes.some(
+              (like: any) =>
+                like._id?.userId === currentUser.uid ||
+                like.user?.id === currentUser.uid
+            );
+
+          nextLiked[postId] =
+            pendingLikedPostsRef.current[postId] !== undefined
+              ? pendingLikedPostsRef.current[postId]
+              : backendLiked;
+
+          nextCounts[postId] =
+            pendingLikeCountsRef.current[postId] !== undefined
+              ? pendingLikeCountsRef.current[postId]
+              : likes.length;
+
+          if (
+            pendingLikedPostsRef.current[postId] !== undefined &&
+            backendLiked === pendingLikedPostsRef.current[postId]
+          ) {
+            delete pendingLikedPostsRef.current[postId];
+            delete pendingLikeCountsRef.current[postId];
+          }
+
+          if (pendingComments.length > 0) {
+            const pendingStillMissing = pendingComments.filter(
+              (pending) =>
+                !savedComments.some(
+                  (saved) =>
+                    saved.text === pending.text &&
+                    saved.username === pending.username
+                )
+            );
+
+            if (pendingStillMissing.length === 0) {
+              delete pendingCommentsRef.current[postId];
+            } else {
+              pendingCommentsRef.current[postId] = pendingStillMissing;
+            }
+          }
+        }
+
+        setLikedPosts((prev) => ({ ...prev, ...nextLiked }));
+        setLikeCounts((prev) => ({ ...prev, ...nextCounts }));
+        setComments((prev) => ({ ...prev, ...nextComments }));
+      } catch (error) {
+        console.error("Error loading post interactions:", error);
+      } finally {
+        loadingInteractionsRef.current = false;
+      }
+    },
+    []
+  );
+
+  const fetchPosts = useCallback(async () => {
+  try {
+    const { data } = await listPosts(dc, NO_CACHE);
+
+    const backendPosts = ((data?.posts ?? []) as FeedPost[]).filter(
+      (post) => !(deletedPostIds?.has(post.id))
+    );
+
+    const pendingPosts = Array.from(pendingCreatedPosts.values()).filter(
+      (post: FeedPost) => post.isPublic && !(deletedPostIds?.has(post.id))
+    );
+
+    const mergedPosts = [
+      ...pendingPosts.filter(
+        (pending: FeedPost) =>
+          !backendPosts.some((post) => post.id === pending.id)
+      ),
+      ...backendPosts,
+    ];
+
+    const feedPosts = sortPosts(mergedPosts);
+
+    setPosts(feedPosts);
+
+    if (feedPosts.length > 0) {
+      await loadPostInteractions(
+        feedPosts.map((post) => post.id),
+        true
+      );
+    }
+  } catch (error) {
+    console.error("Error loading posts:", error);
+  } finally {
+    setLoading(false);
+    setRefreshing(false);
+  }
+}, [sortPosts, loadPostInteractions]);
+
   useEffect(() => {
-    fetchPosts();
-  }, [fetchPosts]);
+    detectZip();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      await loadCurrentUserProfile();
+      await fetchPosts();
+    })();
+  }, [loadCurrentUserProfile, fetchPosts]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchPosts();
+    }, [fetchPosts])
+  );
+
+  useEffect(() => {
+    setPosts((prev) => sortPosts(prev));
+  }, [userZip, sortPosts]);
 
   const onRefresh = async () => {
     setRefreshing(true);
+    await loadCurrentUserProfile();
     await fetchPosts();
   };
 
-  const handleLike = (postId: string) => {
-    const isLiked = likedPosts[postId] ?? false;
-    setLikedPosts((prev) => ({ ...prev, [postId]: !isLiked }));
-    setLikeCounts((prev) => ({
-      ...prev,
-      [postId]: (prev[postId] ?? 0) + (isLiked ? -1 : 1),
-    }));
+  const handleLike = async (postId: string) => {
+    const user = auth.currentUser;
+
+    if (!user) {
+      Alert.alert("Not signed in", "Please sign in to like posts.");
+      return;
+    }
+
+    const wasLiked = likedPosts[postId] ?? false;
+    const nextLiked = !wasLiked;
+    const nextCount = Math.max(
+      0,
+      (likeCounts[postId] ?? 0) + (wasLiked ? -1 : 1)
+    );
+
+    pendingLikedPostsRef.current[postId] = nextLiked;
+    pendingLikeCountsRef.current[postId] = nextCount;
+
+    // update UI before backend updates
+    setLikedPosts((prev) => ({ ...prev, [postId]: nextLiked }));
+    setLikeCounts((prev) => ({ ...prev, [postId]: nextCount }));
+
+    try {
+      if (wasLiked) {
+        await deleteLike(dc, { postId: postId as any, userId: user.uid });
+      } else {
+        await createLike(dc, { postId: postId as any, userId: user.uid });
+      }
+    } catch (error: any) {
+      const isDuplicate =
+        error?.message?.includes("ALREADY_EXISTS") ||
+        error?.message?.includes("unique constraint");
+
+      if (isDuplicate) {
+        pendingLikedPostsRef.current[postId] = true;
+        pendingLikeCountsRef.current[postId] = Math.max(
+          likeCounts[postId] ?? 1,
+          1
+        );
+
+        setLikedPosts((prev) => ({ ...prev, [postId]: true }));
+        setLikeCounts((prev) => ({
+          ...prev,
+          [postId]: Math.max(prev[postId] ?? 1, 1),
+        }));
+        return;
+      }
+
+      console.error("Like error:", error?.message);
+
+      delete pendingLikedPostsRef.current[postId];
+      delete pendingLikeCountsRef.current[postId];
+
+      setLikedPosts((prev) => ({ ...prev, [postId]: wasLiked }));
+      setLikeCounts((prev) => ({
+        ...prev,
+        [postId]: Math.max(0, (prev[postId] ?? 0) + (wasLiked ? 1 : -1)),
+      }));
+    }
   };
 
   const handleCommentToggle = (postId: string) => {
     const isVisible = commentInputVisible[postId] ?? false;
-    setCommentInputVisible((prev) => ({ ...prev, [postId]: !isVisible }));
 
-    // Auto focus input when opening
+    setCommentInputVisible((prev) => ({
+      ...prev,
+      [postId]: !isVisible,
+    }));
+
     if (!isVisible) {
-      setTimeout(() => {
-        inputRefs.current[postId]?.focus();
-      }, 100);
+      setTimeout(() => inputRefs.current[postId]?.focus(), 100);
     }
   };
 
-  const handlePostComment = (postId: string, username: string) => {
+  const handlePostComment = async (postId: string) => {
+    const user = auth.currentUser;
+
+    if (!user) {
+      Alert.alert("Not signed in", "Please sign in to comment.");
+      return;
+    }
+
     const text = (commentText[postId] ?? "").trim();
     if (!text) return;
 
-    const newComment: Comment = {
-      id: Date.now().toString(),
-      username,
+    const tempComment: Comment = {
+      id: `temp-${Date.now()}`,
+      username:
+        currentUsername || user.displayName || user.email?.split("@")[0] || "You",
       text,
       createdAt: new Date().toISOString(),
     };
 
+    pendingCommentsRef.current[postId] = [
+      ...(pendingCommentsRef.current[postId] ?? []),
+      tempComment,
+    ];
+
     setComments((prev) => ({
       ...prev,
-      [postId]: [...(prev[postId] ?? []), newComment],
+      [postId]: [...(prev[postId] ?? []), tempComment],
     }));
 
     setCommentText((prev) => ({ ...prev, [postId]: "" }));
     setCommentInputVisible((prev) => ({ ...prev, [postId]: false }));
+
+    try {
+      await createComment(dc, {
+        postId: postId as any,
+        userId: user.uid,
+        content: text,
+      });
+    } catch (error: any) {
+      console.error("Comment error:", error?.message);
+
+      pendingCommentsRef.current[postId] = (
+        pendingCommentsRef.current[postId] ?? []
+      ).filter((comment) => comment.id !== tempComment.id);
+
+      setComments((prev) => ({
+        ...prev,
+        [postId]: (prev[postId] ?? []).filter(
+          (comment) => comment.id !== tempComment.id
+        ),
+      }));
+    }
   };
 
-  const formatLocation = (post: FeedPost) => {
-    if (post.locationTag) return post.locationTag;
-    if (post.zipCode) return post.zipCode;
-    return "Unknown location";
+  const sendTestNotification = async () => {
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "How was your outfit today?",
+        body: "Tap to rate if it kept you comfortable.",
+        data: { type: "outfit_feedback" },
+        sound: true,
+      },
+      trigger: { type: "timeInterval", seconds: 5, repeats: false } as any,
+    });
+
+    Alert.alert("Sent!", "Background the app — notification fires in 5 seconds.");
   };
+
+  const formatLocation = (post: FeedPost) =>
+    post.locationTag || post.zipCode || "Unknown location";
 
   const formatDate = (dateString?: string | null) => {
     if (!dateString) return "";
+
     try {
       return new Date(dateString).toLocaleDateString();
     } catch {
@@ -165,16 +509,39 @@ export default function Dashboard() {
     }
   };
 
+  const renderClothingDetail = (
+    label: string,
+    items?: string[] | null,
+    materials?: string[] | null
+  ) => {
+    if (!items?.length) return null;
+
+    return (
+      <Text style={[styles.detailText, { color: theme.text }]}>
+        <Text style={styles.detailLabel}>{label}: </Text>
+        {materials?.length
+          ? `${materials.join(", ")} ${items.join(", ")}`
+          : items.join(", ")}
+      </Text>
+    );
+  };
+
   if (loading) {
     return (
-      <SafeAreaView style={[styles.loadingContainer, { backgroundColor: theme.background }]} edges={["top"]}>
+      <SafeAreaView
+        style={[styles.loadingContainer, { backgroundColor: theme.background }]}
+        edges={["top"]}
+      >
         <ActivityIndicator size="large" color="#59C1BD" />
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]} edges={["top"]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.background }]}
+      edges={["top"]}
+    >
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -186,11 +553,62 @@ export default function Dashboard() {
           }
           keyboardShouldPersistTaps="handled"
         >
-          <Text style={[styles.screenTitle, { color: theme.text }]}>Community Feed</Text>
+          <Text style={[styles.screenTitle, { color: theme.text }]}>
+            Community Feed
+          </Text>
+
+          <View
+            style={[
+              styles.zipFilterCard,
+              { backgroundColor: theme.card, borderColor: theme.border },
+            ]}
+          >
+            <Text style={[styles.zipFilterLabel, { color: theme.text }]}>
+              Sort feed by ZIP distance
+            </Text>
+
+            <View style={styles.zipFilterRow}>
+              <TextInput
+                style={[
+                  styles.zipInput,
+                  {
+                    backgroundColor: theme.input,
+                    color: theme.text,
+                    borderColor: theme.border,
+                  },
+                ]}
+                placeholder="Enter ZIP code"
+                placeholderTextColor={theme.subtext}
+                value={zipInput}
+                onChangeText={setZipInput}
+                keyboardType="number-pad"
+                maxLength={5}
+              />
+
+              <Pressable onPress={applyZipFilter} style={styles.iconButton}>
+                <Ionicons name="search" size={18} color={theme.icon} />
+              </Pressable>
+
+              <Pressable onPress={detectZip} style={styles.iconButton}>
+                <Ionicons name="location-outline" size={18} color={theme.icon} />
+              </Pressable>
+            </View>
+          </View>
+
+          <Pressable style={styles.testButton} onPress={sendTestNotification}>
+            <Text style={styles.testButtonText}>Test Outfit Notification</Text>
+          </Pressable>
 
           {posts.length === 0 ? (
-            <View style={[styles.emptyCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-              <Text style={[styles.emptyTitle, { color: theme.text }]}>No posts yet</Text>
+            <View
+              style={[
+                styles.emptyCard,
+                { backgroundColor: theme.card, borderColor: theme.border },
+              ]}
+            >
+              <Text style={[styles.emptyTitle, { color: theme.text }]}>
+                No posts yet
+              </Text>
               <Text style={[styles.emptyText, { color: theme.subtext }]}>
                 No posts yet, time to get creative!
               </Text>
@@ -211,20 +629,24 @@ export default function Dashboard() {
                     { backgroundColor: theme.card, borderColor: theme.border },
                   ]}
                 >
-                  {/* Header */}
                   <View style={styles.postHeader}>
                     <Image
-                      source={{
-                        uri:
-                          post.user.profilePictureUrl ||
-                          "https://via.placeholder.com/100x100.png?text=User",
-                      }}
+                      source={
+                        post.user.profilePictureUrl
+                          ? { uri: post.user.profilePictureUrl }
+                          : cachedUserProfile?.id === post.user.id &&
+                            cachedUserProfile.profilePictureUrl
+                          ? { uri: cachedUserProfile.profilePictureUrl }
+                          : DEFAULT_AVATAR
+                      }
                       style={styles.avatar}
                     />
+
                     <View style={styles.headerTextContainer}>
                       <Text style={[styles.username, { color: theme.text }]}>
                         {post.user.username}
                       </Text>
+
                       <View style={styles.locationRow}>
                         <Ionicons
                           name="location-outline"
@@ -232,54 +654,72 @@ export default function Dashboard() {
                           color={theme.subtext}
                           style={{ marginRight: 4 }}
                         />
-                        <Text style={[styles.locationText, { color: theme.subtext }]}>
+
+                        <Text
+                          style={[
+                            styles.locationText,
+                            { color: theme.subtext },
+                          ]}
+                        >
                           {formatLocation(post)}
                         </Text>
                       </View>
                     </View>
                   </View>
 
-                  {/* Image */}
                   <Image source={{ uri: post.imageUrl }} style={styles.postImage} />
 
-                  {/* Actions */}
                   <View style={styles.actionRow}>
-                    <View style={styles.leftActions}>
-                      {/* Like */}
-                      <TouchableOpacity
-                        style={styles.actionButton}
-                        onPress={() => handleLike(post.id)}
-                      >
-                        <Ionicons
-                          name={liked ? "heart" : "heart-outline"}
-                          size={28}
-                          color={liked ? "#f43f5e" : theme.icon}
-                          style={styles.actionIcon}
-                        />
-                        <Text style={[styles.actionCount, { color: liked ? "#f43f5e" : theme.subtext }]}>
-                          {likeCount}
-                        </Text>
-                      </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.actionButton}
+                      onPress={() => handleLike(post.id)}
+                    >
+                      <Ionicons
+                        name={liked ? "heart" : "heart-outline"}
+                        size={28}
+                        color={liked ? "#f43f5e" : theme.icon}
+                        style={styles.actionIcon}
+                      />
 
-                      {/* Comment */}
-                      <TouchableOpacity
-                        style={styles.actionButton}
-                        onPress={() => handleCommentToggle(post.id)}
+                      <Text
+                        style={[
+                          styles.actionCount,
+                          { color: liked ? "#f43f5e" : theme.subtext },
+                        ]}
                       >
-                        <Ionicons
-                          name={isCommentOpen ? "chatbubble" : "chatbubble-outline"}
-                          size={26}
-                          color={isCommentOpen ? "#59C1BD" : theme.icon}
-                          style={styles.actionIcon}
-                        />
-                        <Text style={[styles.actionCount, { color: isCommentOpen ? "#59C1BD" : theme.subtext }]}>
-                          {commentCount}
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
+                        {likeCount}
+                      </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={styles.actionButton}
+                      onPress={() => handleCommentToggle(post.id)}
+                    >
+                      <Ionicons
+                        name={isCommentOpen ? "chatbubble" : "chatbubble-outline"}
+                        size={26}
+                        color={isCommentOpen ? "#59C1BD" : theme.icon}
+                        style={styles.actionIcon}
+                      />
+
+                      <Text
+                        style={[
+                          styles.actionCount,
+                          { color: isCommentOpen ? "#59C1BD" : theme.subtext },
+                        ]}
+                      >
+                        {commentCount}
+                      </Text>
+                    </TouchableOpacity>
                   </View>
 
-                  {/* Post Body */}
+                  <View style={styles.postStatsRow}>
+                    <Text style={[styles.postStatsText, { color: theme.subtext }]}>
+                      {likeCount} like{likeCount === 1 ? "" : "s"} ·{" "}
+                      {commentCount} comment{commentCount === 1 ? "" : "s"}
+                    </Text>
+                  </View>
+
                   <View style={styles.postBody}>
                     <Text style={[styles.captionUsername, { color: theme.text }]}>
                       {post.user.username}{" "}
@@ -288,20 +728,12 @@ export default function Dashboard() {
                       </Text>
                     </Text>
 
-                    {!!post.top && (
-                      <Text style={[styles.detailText, { color: theme.text }]}>
-                        <Text style={styles.detailLabel}>top:</Text> {post.top}
-                      </Text>
-                    )}
-                    {!!post.bottom && (
-                      <Text style={[styles.detailText, { color: theme.text }]}>
-                        <Text style={styles.detailLabel}>bottom:</Text> {post.bottom}
-                      </Text>
-                    )}
-                    {!!post.outerwear && (
-                      <Text style={[styles.detailText, { color: theme.text }]}>
-                        <Text style={styles.detailLabel}>outerwear:</Text> {post.outerwear}
-                      </Text>
+                    {renderClothingDetail("top", post.tops, post.topMaterials)}
+                    {renderClothingDetail("bottom", post.bottoms, post.bottomMaterials)}
+                    {renderClothingDetail(
+                      "outerwear",
+                      post.outerwear,
+                      post.outerwearMaterials
                     )}
 
                     <Text style={[styles.dateText, { color: theme.subtext }]}>
@@ -309,14 +741,28 @@ export default function Dashboard() {
                     </Text>
                   </View>
 
-                  {/* Comments List */}
                   {postComments.length > 0 && (
-                    <View style={[styles.commentsSection, { borderTopColor: theme.border }]}>
+                    <View
+                      style={[
+                        styles.commentsSection,
+                        { borderTopColor: theme.border },
+                      ]}
+                    >
                       {postComments.map((comment) => (
                         <View key={comment.id} style={styles.commentRow}>
-                          <Text style={[styles.commentUsername, { color: theme.text }]}>
+                          <Text
+                            style={[
+                              styles.commentUsername,
+                              { color: theme.text },
+                            ]}
+                          >
                             {comment.username}{" "}
-                            <Text style={[styles.commentText, { color: theme.text }]}>
+                            <Text
+                              style={[
+                                styles.commentText,
+                                { color: theme.text },
+                              ]}
+                            >
                               {comment.text}
                             </Text>
                           </Text>
@@ -325,31 +771,46 @@ export default function Dashboard() {
                     </View>
                   )}
 
-                  {/* Comment Input */}
                   {isCommentOpen && (
-                    <View style={[styles.commentInputRow, { borderTopColor: theme.border, backgroundColor: theme.input }]}>
+                    <View
+                      style={[
+                        styles.commentInputRow,
+                        {
+                          borderTopColor: theme.border,
+                          backgroundColor: theme.input,
+                        },
+                      ]}
+                    >
                       <TextInput
-                        ref={(ref) => { inputRefs.current[post.id] = ref; }}
+                        ref={(ref) => {
+                          inputRefs.current[post.id] = ref;
+                        }}
                         style={[styles.commentInput, { color: theme.text }]}
                         placeholder="Add a comment..."
                         placeholderTextColor={theme.subtext}
                         value={commentText[post.id] ?? ""}
                         onChangeText={(text) =>
-                          setCommentText((prev) => ({ ...prev, [post.id]: text }))
+                          setCommentText((prev) => ({
+                            ...prev,
+                            [post.id]: text,
+                          }))
                         }
-                        onSubmitEditing={() => handlePostComment(post.id, post.user.username)}
+                        onSubmitEditing={() => handlePostComment(post.id)}
                         returnKeyType="send"
                         multiline={false}
                       />
+
                       <TouchableOpacity
-                        onPress={() => handlePostComment(post.id, post.user.username)}
+                        onPress={() => handlePostComment(post.id)}
                         disabled={!(commentText[post.id] ?? "").trim()}
                       >
                         <Ionicons
                           name="send"
                           size={22}
                           color={
-                            (commentText[post.id] ?? "").trim() ? "#59C1BD" : theme.subtext
+                            (commentText[post.id] ?? "").trim()
+                              ? "#59C1BD"
+                              : theme.subtext
                           }
                         />
                       </TouchableOpacity>
@@ -366,9 +827,7 @@ export default function Dashboard() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+  container: { flex: 1 },
   contentContainer: {
     paddingTop: 8,
     paddingBottom: 28,
@@ -384,6 +843,47 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     marginBottom: 16,
     paddingHorizontal: 4,
+  },
+  zipFilterCard: {
+    borderWidth: 1,
+    borderRadius: 18,
+    padding: 14,
+    marginBottom: 12,
+  },
+  zipFilterLabel: {
+    fontSize: 16,
+    fontWeight: "700",
+    marginBottom: 10,
+  },
+  zipFilterRow: {
+    flexDirection: "row",
+    gap: 8,
+    alignItems: "center",
+  },
+  zipInput: {
+    flex: 1,
+    borderWidth: 1,
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    fontSize: 15,
+  },
+  iconButton: {
+  padding: 10,
+  justifyContent: "center",
+  alignItems: "center",
+  },
+  testButton: {
+    backgroundColor: "#59C1BD",
+    padding: 12,
+    borderRadius: 12,
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  testButtonText: {
+    color: "#fff",
+    fontWeight: "700",
+    fontSize: 15,
   },
   emptyCard: {
     borderWidth: 1,
@@ -440,13 +940,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#DDD",
   },
   actionRow: {
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 12,
     paddingTop: 10,
     paddingBottom: 4,
-  },
-  leftActions: {
-    flexDirection: "row",
-    alignItems: "center",
   },
   actionButton: {
     flexDirection: "row",
@@ -459,6 +957,14 @@ const styles = StyleSheet.create({
   actionCount: {
     fontSize: 14,
     fontWeight: "600",
+  },
+  postStatsRow: {
+    paddingHorizontal: 14,
+    paddingVertical: 4,
+  },
+  postStatsText: {
+    fontSize: 13,
+    lineHeight: 18,
   },
   postBody: {
     paddingHorizontal: 14,
@@ -474,8 +980,8 @@ const styles = StyleSheet.create({
     fontWeight: "400",
   },
   detailText: {
-    fontSize: 16,
-    lineHeight: 24,
+    fontSize: 15,
+    lineHeight: 22,
     marginBottom: 2,
   },
   detailLabel: {
