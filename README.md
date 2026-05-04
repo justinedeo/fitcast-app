@@ -4,10 +4,10 @@
 CSCI 440-Capstone Final
 
 ## Team
-Justine De Ocampo
-Gabe Pipes
-Caitlyn Beam
-Ian Calhoun
+Justine De Ocampo  
+Gabe Pipes  
+Caitlyn Beam  
+Ian Calhoun  
 
 ---
 
